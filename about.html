@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e" id="themeColor">
+    <title>About - Day by Day</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:opsz,wght@9..144,300;9..144,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .help-container { max-width: 480px; }
+    </style>
+    <script>
+        // Load user preferences from localStorage
+        (function() {
+            try {
+                const state = JSON.parse(localStorage.getItem('chemoTrackerState') || '{}');
+                if (state.theme === 'light') {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+                if (state.accentColour) {
+                    document.documentElement.style.setProperty('--accent-colour', state.accentColour);
+                }
+            } catch(e) {}
+        })();
+    </script>
+</head>
+<body>
+    <div class="help-container">
+        <div class="help-header">
+            <div class="help-logo">Day by Day</div>
+            <div class="help-tagline">Cycles, made manageable</div>
+        </div>
+
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#why">Why This App Exists</a></li>
+                <li><a href="#who">Who It's For</a></li>
+                <li><a href="#principles">Design Principles</a></li>
+                <li><a href="#how">How It Works</a></li>
+                <li><a href="#privacy">Privacy & Data</a></li>
+                <li><a href="#acknowledgements">Acknowledgements</a></li>
+                <li><a href="#disclaimer">Medical Disclaimer</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+
+        <section class="help-section" id="why">
+            <h2 class="help-section-title">Why This App Exists</h2>
+            <p class="help-text">
+                Day by Day was built for my wife, <strong>Hazel</strong>, while she is undergoing chemotherapy for breast cancer.
+                It started as a simple request: "Can you make me a spreadsheet to track my medications?"
+            </p>
+            <p class="help-text">
+                The spreadsheet worked – but it wasn't the right shape for real life. We needed something that was
+                <strong>always to hand</strong>, <strong>mobile-first</strong>, and <strong>quick to update</strong> as medications were taken.
+                So I took the spreadsheet idea one step further and built Day by Day as a small, calm web app.
+            </p>
+        </section>
+
+        <section class="help-section" id="who">
+            <h2 class="help-section-title">Who It's For</h2>
+            <p class="help-text">
+                Day by Day is for anyone going through treatment (or supporting someone who is) who needs a
+                simple way to stay on top of a busy day – without turning life into a full-time admin job.
+            </p>
+            <ul class="help-list">
+                <li><strong>Track:</strong> medications and daily tasks you need to remember</li>
+                <li><strong>Record:</strong> temperature, weight, and "how I'm feeling" notes</li>
+                <li><strong>Summarise:</strong> generate a daily email that captures how the day went</li>
+            </ul>
+        </section>
+
+        <section class="help-section" id="principles">
+            <h2 class="help-section-title">Design Principles</h2>
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Reassurance Over Complexity</h3>
+                <p class="help-text">
+                    The goal is not "more features". The goal is <strong>less stress</strong>.
+                    If something adds friction, confusion, or clutter, it probably doesn't belong.
+                </p>
+            </div>
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Private by Default</h3>
+                <p class="help-text">
+                    No accounts. No sign-in. No syncing. No server.
+                    Your data stays on your device and remains yours.
+                </p>
+            </div>
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Helpful, Not Clinical</h3>
+                <p class="help-text">
+                    This isn't trying to be a medical system. It's meant to be quietly supportive:
+                    reminders, a record of the day, and quick access to useful information and contacts.
+                </p>
+            </div>
+        </section>
+
+        <section class="help-section" id="how">
+            <h2 class="help-section-title">How It Works</h2>
+            <p class="help-text">
+                Day by Day is a self-contained web app designed for a phone screen first.
+                You can add it to your home screen and use it like an app.
+            </p>
+            <ul class="help-list">
+                <li>Tick off medications and tasks as you go</li>
+                <li>Capture a few simple health measures (such as temperature and weight)</li>
+                <li>Write quick notes about symptoms, mood, sleep, or anything else that matters</li>
+                <li>View symptom trends across each cycle to spot patterns</li>
+                <li>Generate a daily summary email as a record for yourself or your care team</li>
+            </ul>
+            <div class="help-tip">
+                <div class="help-tip-title">The "two-second" test</div>
+                <div class="help-tip-text">
+                    If it takes more than a couple of seconds to log something, you'll stop doing it.
+                    This app is built around keeping the basics easy.
+                </div>
+            </div>
+        </section>
+
+        <section class="help-section" id="privacy">
+            <h2 class="help-section-title">Privacy & Data</h2>
+            <p class="help-text">
+                Day by Day stores data <strong>locally</strong> in your browser on your device.
+                There is no backend and no account system, so nothing is uploaded by default.
+            </p>
+            <p class="help-text">
+                If you choose to email a daily summary, that email is sent using your own email app and settings.
+                You are in control of what is shared and with whom.
+            </p>
+        </section>
+
+        <section class="help-section" id="acknowledgements">
+            <h2 class="help-section-title">Acknowledgements</h2>
+            <p class="help-text">
+                Day by Day was developed by <strong>Ken McCarthy</strong>.
+                Generative AI tools – <strong>Claude</strong> and <strong>ChatGPT</strong> – were used during development to help draft,
+                refine, and iterate the HTML, CSS, JavaScript, and interaction patterns based on prompt-driven instructions.
+            </p>
+            <p class="help-text">
+                The app uses the following open-source libraries and external services:
+            </p>
+            <ul class="help-list">
+                <li><strong>Chart.js</strong> – for rendering symptom trend charts (<a href="https://www.chartjs.org">chartjs.org</a>)</li>
+                <li><strong>Google Fonts</strong> – DM Sans and Fraunces typefaces (<a href="https://fonts.google.com">fonts.google.com</a>)</li>
+                <li><strong>Quotable API</strong> – for daily inspirational quotes (<a href="https://github.com/lukePeavey/quotable">github.com/lukePeavey/quotable</a>)</li>
+            </ul>
+            <p class="help-text">
+                The navigation icons follow the <strong>Heroicons</strong> style (<a href="https://heroicons.com">heroicons.com</a>).
+            </p>
+            <p class="help-text">
+                The aim was to use these tools as practical accelerators, while keeping the intent, design choices,
+                and responsibility for the app firmly human.
+            </p>
+        </section>
+
+        <section class="help-section" id="disclaimer">
+            <h2 class="help-section-title">Medical Disclaimer</h2>
+            <p class="help-text">
+                Day by Day does <strong>not</strong> provide medical advice, diagnosis, or treatment recommendations.
+                It is an organisational tool only.
+            </p>
+            <p class="help-text">
+                Always follow the guidance of your medical team. If you are worried about symptoms or side effects,
+                use the contact numbers provided by your care team or seek urgent medical attention where appropriate.
+            </p>
+        </section>
+
+        <section class="help-section" id="contact">
+            <h2 class="help-section-title">Contact</h2>
+            <p class="help-text">
+                Feedback and ideas are welcome – especially if they keep the app simple and genuinely useful.
+            </p>
+            <ul class="help-list">
+                <li><strong>Developer:</strong> Ken McCarthy</li>
+                <li><strong>Email:</strong> <a href="mailto:kenmccarthy@gmail.com">kenmccarthy@gmail.com</a></li>
+            </ul>
+        </section>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="bottom-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg><span>Today</span></a>
+        <a href="index.html#calendar" class="bottom-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><span>Calendar</span></a>
+        <a href="index.html#settings" class="bottom-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg><span>Settings</span></a>
+        <a href="help.html" class="bottom-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span>Help</span></a>
+    </nav>
+<script data-goatcounter="https://daybyday.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

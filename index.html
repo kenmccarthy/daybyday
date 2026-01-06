@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e" id="themeColor">
+    <title>Day by Day</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:opsz,wght@9..144,300;9..144,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="app-branding">
+                    <div class="app-name">Day by Day</div>
+                    <div class="app-tagline">Cycles, made manageable</div>
+                </div>
+                <div class="date-display">
+                    <div class="day-name" id="dayName">Monday</div>
+                    <div class="date" id="dateDisplay">22 December 2025</div>
+                </div>
+            </div>
+            <div class="header-cycle-row">
+                <div class="cycle-badge" id="cycleBadge">Cycle 1</div>
+            </div>
+            <div class="patient-greeting" id="patientGreeting"></div>
+            <h1 class="day-title" id="dayTitle">Day 0</h1>
+            <p class="day-subtitle" id="daySubtitle">Chemotherapy day</p>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width: 0%"></div></div>
+            <div class="progress-text"><span id="progressText">0 of 0 taken</span><span id="progressPercent">0%</span></div>
+        </header>
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-view="today">Today</button>
+            <button class="nav-tab" data-view="calendar">Calendar</button>
+            <button class="nav-tab" data-view="settings">Settings</button>
+        </nav>
+        <main class="today-view active" id="todayView">
+            <div class="quote-card" id="quoteCard">
+                <div class="quote-text" id="quoteText">Loading inspiration...</div>
+                <div class="quote-author" id="quoteAuthor"></div>
+            </div>
+            <div class="all-done-card" id="allDoneCard" style="display:none;">
+                <div class="all-done-icon">✓</div>
+                <div class="all-done-text">That's everything for today. Well done.</div>
+            </div>
+            <div class="emergency-card" id="emergencyCard" style="display:none;">
+                <div class="emergency-title">📞 Emergency Contacts</div>
+                <div class="emergency-contacts" id="emergencyContacts"></div>
+            </div>
+            <div id="medicationsContainer"></div>
+            <section class="prn-section"><div class="prn-header"><h2 class="prn-title">As Needed</h2></div><div id="prnContainer"></div></section>
+            <section class="symptoms-section collapsible-section"><div class="section-header-collapsible" data-section="symptoms"><h2 class="section-title">Let's check in</h2><span class="collapse-icon">▼</span></div><div class="section-content" id="symptomsContent"><p class="symptoms-intro" id="symptomsIntro">There are no wrong answers – this is just for you and your care team.</p><div id="symptomsContainer"></div></div></section>
+            <section class="notes-section collapsible-section"><div class="section-header-collapsible" data-section="notes"><h2 class="notes-title">Notes</h2><span class="collapse-icon">▼</span></div><div class="section-content" id="notesContent"><textarea class="notes-textarea" id="notesTextarea" placeholder="Any other observations or things to mention at your next appointment..."></textarea></div></section>
+
+            <section class="notes-section collapsible-section">
+                <div class="section-header-collapsible" data-section="food">
+                    <h2 class="notes-title">Food &amp; drink</h2>
+                    <span class="collapse-icon">▼</span>
+                </div>
+                <div class="section-content" id="foodContent">
+                    <textarea class="notes-textarea" id="foodTextarea"
+                        placeholder="What you managed to eat or drink today (meals, snacks, fluids, anything that stayed down)..."></textarea>
+                </div>
+            </section>
+
+            <section class="win-section collapsible-section"><div class="section-header-collapsible" data-section="win"><h2 class="section-title">Today's win</h2><span class="collapse-icon">▼</span></div><div class="section-content" id="winContent"><p class="win-intro">Even on hard days, there's usually something. It doesn't have to be big.</p><textarea class="win-textarea" id="winTextarea" placeholder="One thing that went well today..."></textarea></div></section>
+            <section class="summary-section"><div class="summary-header"><h2 class="section-title">Daily Summary</h2></div><button class="summary-btn primary" id="sendSummaryBtn">✉️ Send Daily Summary Email</button></section>
+        </main>
+        <main class="calendar-view" id="calendarView">
+            <div class="cycle-progress-card" id="cycleProgressCard">
+                <div class="cycle-progress-header">
+                    <span class="cycle-progress-title">Cycle Progress</span>
+                    <span class="cycle-progress-text" id="cycleProgressText">Day 0 of 23</span>
+                </div>
+                <div class="cycle-progress-bar"><div class="cycle-progress-fill" id="cycleProgressFill" style="width: 0%"></div></div>
+                <div class="cycle-progress-labels">
+                    <span>Day -1</span>
+                    <span id="cycleProgressPercent">0%</span>
+                    <span>Day +20</span>
+                </div>
+            </div>
+            <div class="cycle-selector" id="cycleSelector"></div>
+            <div class="calendar-legend">
+                <div class="legend-item"><div class="legend-dot today"></div><span>Today</span></div>
+                <div class="legend-item"><div class="legend-dot chemo"></div><span>Chemo day</span></div>
+                <div class="legend-item"><div class="legend-dot injection"></div><span>Injection day</span></div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+            
+            <section class="cycle-trends-section">
+                <h2 class="section-title">Cycle Trends</h2>
+                <div class="charts-container" id="chartsContainer"></div>
+                <p class="charts-note">Charts show symptom levels (1-5) across the cycle. Gaps indicate days without recorded data.</p>
+            </section>
+            
+            <section class="reports-section">
+                <h2 class="section-title">Reports</h2>
+                <div class="settings-card">
+                    <div class="settings-card-title">Cycle Summary PDF</div>
+                    <div class="settings-card-desc">Generate a printable report of this cycle for your care team, including medication adherence, symptoms, vitals, and notes.</div>
+                    <button class="settings-btn primary" id="downloadCyclePdfBtn">📄 Download Cycle Summary</button>
+                </div>
+            </section>
+        </main>
+        <main class="settings-view" id="settingsView">
+            <section class="settings-section">
+                <h2 class="settings-section-title">Your Details</h2>
+                <div class="settings-card">
+                    <div><label class="settings-label">Your Name</label><input type="text" class="settings-input" id="patientNameInput" placeholder="Enter your name"></div>
+                    <div><label class="settings-label">Your Email Address</label><input type="email" class="settings-input" id="patientEmailInput" placeholder="Enter your email address"></div>
+                    <div class="settings-card-hint">Daily summary reports will be sent to this address.</div>
+                    <button class="settings-btn" id="savePatientBtn">💾 Save Details</button>
+                </div>
+            </section>
+            <section class="settings-section">
+                <h2 class="settings-section-title">Emergency Contacts</h2>
+                <div class="settings-card">
+                    <div class="settings-card-desc">These numbers will appear on the Today screen for quick access.</div>
+                    <div><label class="settings-label">Oncology Unit</label><input type="tel" class="settings-input" id="oncologyUnitInput" placeholder="e.g. 051 234 5678"></div>
+                    <div><label class="settings-label">Out of Hours</label><input type="tel" class="settings-input" id="outOfHoursInput" placeholder="e.g. 051 234 5679"></div>
+                    <div><label class="settings-label">GP</label><input type="tel" class="settings-input" id="gpInput" placeholder="e.g. 051 234 5680"></div>
+                    <button class="settings-btn" id="saveEmergencyBtn">💾 Save Emergency Contacts</button>
+                </div>
+            </section>
+            <section class="settings-section">
+                <h2 class="settings-section-title">Cycle Dates</h2>
+                <div class="settings-card">
+                    <div class="settings-card-desc">Enter the Day 0 (chemo day) for each cycle. Leave blank for cycles not yet scheduled.</div>
+                    <div class="settings-row">
+                        <div><label>Cycle 1</label><input type="date" class="settings-input" id="cycle1Date" value="2025-12-22"></div>
+                        <div><label>Cycle 2</label><input type="date" class="settings-input" id="cycle2Date" value="2026-01-13"></div>
+                    </div>
+                    <div class="settings-row">
+                        <div><label>Cycle 3</label><input type="date" class="settings-input" id="cycle3Date"></div>
+                        <div><label>Cycle 4</label><input type="date" class="settings-input" id="cycle4Date"></div>
+                    </div>
+                    <div class="settings-row">
+                        <div><label>Cycle 5</label><input type="date" class="settings-input" id="cycle5Date"></div>
+                        <div><label>Cycle 6</label><input type="date" class="settings-input" id="cycle6Date"></div>
+                    </div>
+                    <button class="settings-btn" id="saveCycleDatesBtn">💾 Save Cycle Dates</button>
+                </div>
+            </section>
+            <section class="settings-section">
+                <h2 class="settings-section-title">Appearance</h2>
+                <div class="settings-card">
+                    <div class="toggle-row">
+                        <span class="toggle-label">Light Mode</span>
+                        <div class="toggle-switch" id="themeToggle"></div>
+                    </div>
+                    <div class="toggle-row" style="margin-top: 12px;">
+                        <span class="toggle-label">Show daily messages</span>
+                        <div class="toggle-switch" id="showMessagesToggle"></div>
+                    </div>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-card-title">Accent Colour</div>
+                    <div class="colour-picker" id="colourPicker">
+                        <div class="colour-option" data-colour="#2a9d8f" style="background: #2a9d8f;" title="Teal"></div>
+                        <div class="colour-option" data-colour="#6366f1" style="background: #6366f1;" title="Indigo"></div>
+                        <div class="colour-option" data-colour="#8b5cf6" style="background: #8b5cf6;" title="Purple"></div>
+                        <div class="colour-option" data-colour="#ec4899" style="background: #ec4899;" title="Pink"></div>
+                        <div class="colour-option" data-colour="#f43f5e" style="background: #f43f5e;" title="Rose"></div>
+                        <div class="colour-option" data-colour="#f97316" style="background: #f97316;" title="Orange"></div>
+                        <div class="colour-option" data-colour="#eab308" style="background: #eab308;" title="Yellow"></div>
+                        <div class="colour-option" data-colour="#22c55e" style="background: #22c55e;" title="Green"></div>
+                    </div>
+                </div>
+            </section>
+            <section class="settings-section">
+                <h2 class="settings-section-title">Medications</h2>
+                <div class="settings-card">
+                    <div class="settings-card-desc">Tap any medication to edit it, or use × to remove.</div>
+                    <div id="medicationsList"></div>
+                    <button class="settings-btn" id="addMedicationBtn">+ Add Medication</button>
+                    <button class="settings-btn" id="resetMedicationsBtn" style="margin-top: 8px;">↺ Reset to Defaults</button>
+                </div>
+            </section>
+            <section class="settings-section">
+                <h2 class="settings-section-title">Backup & Restore</h2>
+                <div class="settings-card">
+                    <div class="settings-card-title">Export Data</div>
+                    <div class="settings-card-desc">Download all your tracking data as a backup file.</div>
+                    <button class="settings-btn" id="exportBtn">📥 Export Backup</button>
+                    <div class="last-backup-info" id="lastBackupInfo"></div>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-card-title">Import Data</div>
+                    <div class="settings-card-desc">Restore from a previous backup file.</div>
+                    <button class="settings-btn" id="importBtn">📤 Import Backup</button>
+                    <input type="file" id="fileInput" class="file-input" accept=".json">
+                </div>
+                <div class="settings-card">
+                    <div class="settings-card-title">Clear All Data</div>
+                    <div class="settings-card-desc">Remove all tracking data. This cannot be undone.</div>
+                    <button class="settings-btn danger" id="clearBtn">🗑️ Clear All Data</button>
+                </div>
+            </section>
+            <section class="settings-section">
+                <h2 class="settings-section-title">About & Licence</h2>
+                <div class="settings-card">
+                    <div class="settings-card-title">Day by Day</div>
+                    <div class="settings-card-desc">Cycles, made manageable</div>
+                    <a href="about.html" class="help-link">📖 View About Page</a><br>
+                    <a href="licence.html" class="help-link">📖 View Licence Page</a><br>
+                </div>
+            </section>
+        </main>
+    </div>
+    <nav class="bottom-nav">
+        <button class="bottom-nav-item active" data-view="today"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg><span>Today</span></button>
+        <button class="bottom-nav-item" data-view="calendar"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><span>Calendar</span></button>
+        <button class="bottom-nav-item" data-view="settings"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg><span>Settings</span></button>
+        <a href="help.html" class="bottom-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span>Help</span></a>
+    </nav>
+    <div class="toast" id="toast"></div>
+    <div class="modal-overlay" id="medModal">
+        <div class="modal">
+            <div class="modal-title" id="medModalTitle">Add Medication</div>
+            <div><label class="settings-label">Medication Name</label><input type="text" class="settings-input" id="medNameInput" placeholder="e.g. Dexamethasone"></div>
+            <div><label class="settings-label">Dose</label><input type="text" class="settings-input" id="medDoseInput" placeholder="e.g. 8 mg"></div>
+            <div><label class="settings-label">Time of Day</label>
+                <div class="med-times-grid">
+                    <div class="med-time-option"><input type="checkbox" id="medTimeMorning"><label for="medTimeMorning">Morning</label></div>
+                    <div class="med-time-option"><input type="checkbox" id="medTimeAfternoon"><label for="medTimeAfternoon">Afternoon</label></div>
+                    <div class="med-time-option"><input type="checkbox" id="medTimeEvening"><label for="medTimeEvening">Evening</label></div>
+                    <div class="med-time-option"><input type="checkbox" id="medTimeBedtime"><label for="medTimeBedtime">Bedtime</label></div>
+                </div>
+            </div>
+            <div class="med-editor-row">
+                <div style="flex:1;"><label class="settings-label">Start Day</label><select id="medStartDay"></select></div>
+                <div style="flex:1;"><label class="settings-label">End Day</label><select id="medEndDay"></select></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="settings-btn" id="medModalCancel">Cancel</button>
+                <button class="settings-btn primary" id="medModalSave">Save</button>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+         <script data-goatcounter="https://daybyday.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

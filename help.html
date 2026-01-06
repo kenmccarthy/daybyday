@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e" id="themeColor">
+    <title>Help - Day by Day</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:opsz,wght@9..144,300;9..144,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .help-container { max-width: 480px; }
+    </style>
+    <script>
+        // Load user preferences from localStorage
+        (function() {
+            try {
+                const state = JSON.parse(localStorage.getItem('chemoTrackerState') || '{}');
+                if (state.theme === 'light') {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+                if (state.accentColour) {
+                    document.documentElement.style.setProperty('--accent-colour', state.accentColour);
+                }
+            } catch(e) {}
+        })();
+    </script>
+</head>
+<body>
+    <div class="help-container">
+        <div class="help-header">
+            <div class="help-logo">Day by Day</div>
+            <div class="help-tagline">Cycles, made manageable</div>
+        </div>
+
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <ul class="toc-list">
+                <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="#today-view">Today View</a></li>
+                <li><a href="#tracking-medications">Tracking Medications</a></li>
+                <li><a href="#symptoms">Symptom Tracking</a></li>
+                <li><a href="#calendar">Calendar View</a></li>
+                <li><a href="#cycle-trends">Cycle Trends</a></li>
+                <li><a href="#settings">Settings</a></li>
+                <li><a href="#daily-summary">Daily Summary</a></li>
+                <li><a href="#backup">Backup & Restore</a></li>
+                <li><a href="#tips">Tips</a></li>
+            </ul>
+        </nav>
+
+        <section class="help-section" id="getting-started">
+            <h2 class="help-section-title">Getting Started</h2>
+            
+            <p class="help-text">Day by Day is designed to help you track medications, symptoms, and wellbeing during chemotherapy treatment cycles. The app works entirely on your device – no account needed, and your data stays private.</p>
+            
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Adding to Your Home Screen</h3>
+                <p class="help-text">For the best experience, add Day by Day to your phone's home screen:</p>
+                <ul class="help-list">
+                    <li><strong>iPhone/iPad:</strong> Tap the Share button (square with arrow) in Safari, then "Add to Home Screen"</li>
+                    <li><strong>Android:</strong> Tap the menu (three dots) in Chrome, then "Add to Home Screen"</li>
+                </ul>
+                <p class="help-text">Once added, the app opens full-screen like a native app and works offline.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Initial Setup</h3>
+                <p class="help-text">Before you start, go to Settings and:</p>
+                <ul class="help-list">
+                    <li>Enter your name (your first name will be used in greetings)</li>
+                    <li>Add your email address for daily summaries</li>
+                    <li>Set your cycle dates (Day 0 = chemotherapy day)</li>
+                    <li>Add emergency contact numbers</li>
+                    <li>Review and adjust medications if needed</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="help-section" id="today-view">
+            <h2 class="help-section-title">Today View</h2>
+            
+            <p class="help-text">The Today view is your daily dashboard, showing everything relevant to the current day.</p>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">What You'll See</h3>
+                <ul class="help-list">
+                    <li><strong>Daily Quote:</strong> An inspirational message that changes each day</li>
+                    <li><strong>Emergency Contacts:</strong> Quick-dial numbers (if configured)</li>
+                    <li><strong>Scheduled Medications:</strong> Organised by time of day</li>
+                    <li><strong>As-Needed Medications:</strong> PRN medications with counters</li>
+                    <li><strong>Symptom Check-in:</strong> Temperature, weight, and how you're feeling</li>
+                    <li><strong>Notes:</strong> Space for observations</li>
+                    <li><strong>Food & Drink:</strong> Space for food and drink notes</li>
+                    <li><strong>Today's Win:</strong> A place to note something positive</li>
+                </ul>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Time Periods</h3>
+                <p class="help-text">Medications are grouped by time of day, each with a colour:</p>
+                <ul class="help-list">
+                    <li><span class="help-colour-dot morning"></span><strong>Morning</strong> – 06:00 to 12:00</li>
+                    <li><span class="help-colour-dot afternoon"></span><strong>Afternoon</strong> – 12:00 to 18:00</li>
+                    <li><span class="help-colour-dot evening"></span><strong>Evening</strong> – 18:00 to 22:00</li>
+                    <li><span class="help-colour-dot bedtime"></span><strong>Bedtime</strong> – 22:00 to 00:00</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="help-section" id="tracking-medications">
+            <h2 class="help-section-title">Tracking Medications</h2>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Marking as Taken</h3>
+                <p class="help-text">Tap any medication card to mark it as taken. The app records the exact time and shows a green checkmark. Tap again to undo if you made a mistake.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Medication Info Links</h3>
+                <p class="help-text">Many medications have an "info" link that opens a patient information page. This is useful for checking side effects or interactions.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">As-Needed (PRN) Medications</h3>
+                <p class="help-text">Use the + and − buttons to log doses of PRN medications like pain relief or anti-nausea tablets. The counter shows how many you've taken versus the daily maximum.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Progress Bar</h3>
+                <p class="help-text">The progress bar at the top shows what percentage of your scheduled medications you've taken today. This only counts scheduled medications, not PRN ones.</p>
+            </div>
+        </section>
+
+        <section class="help-section" id="symptoms">
+            <h2 class="help-section-title">Symptom Tracking</h2>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Temperature</h3>
+                <p class="help-text">Enter your temperature in °C. If it reaches 38°C or above, a message will appear reminding you to contact the oncology team.</p>
+                
+                <div class="help-warning">
+                    <div class="help-warning-title">Important</div>
+                    <div class="help-warning-text">A temperature of 38°C or above during chemotherapy can indicate infection and needs prompt medical attention. Don't wait – call your oncology team.</div>
+                </div>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Weight</h3>
+                <p class="help-text">Daily weight tracking helps identify significant changes. The app shows your change from baseline (your first recorded weight) in both kg and percentage.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Symptom Scales</h3>
+                <p class="help-text">Rate each symptom from 1 to 5. The colour of each button reflects whether higher or lower is better for that symptom. The symptoms tracked are:</p>
+                <ul class="help-list">
+                    <li><strong>Fatigue/Energy</strong> – 1 = good energy, 5 = exhausted</li>
+                    <li><strong>Nausea</strong> – 1 = none, 5 = severe</li>
+                    <li><strong>Pain</strong> – 1 = none, 5 = severe</li>
+                    <li><strong>Appetite</strong> – 1 = no appetite, 5 = normal</li>
+                    <li><strong>Mood</strong> – 1 = low, 5 = good</li>
+                    <li><strong>Mouth Sores</strong> – 1 = none, 5 = severe</li>
+                    <li><strong>Sleep</strong> – 1 = very poor, 5 = slept well</li>
+                    <li><strong>Bowel Function</strong> – 1 = constipated, 3 = normal, 5 = diarrhoea</li>
+                    <li><strong>Concentration</strong> – 1 = poor, 5 = good</li>
+                </ul>
+                <p class="help-text">Tap a number to select it. Tap again to deselect. These ratings help you and your care team spot patterns over time.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Today's Win</h3>
+                <p class="help-text">Even on difficult days, noting something positive can help. It doesn't have to be big – maybe you managed a short walk, enjoyed a meal, or had a good conversation.</p>
+            </div>
+        </section>
+
+        <section class="help-section" id="calendar">
+            <h2 class="help-section-title">Calendar View</h2>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Cycle Progress</h3>
+                <p class="help-text">At the top, you'll see how far through the current cycle you are, with a progress bar and day count.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Switching Cycles</h3>
+                <p class="help-text">Use the cycle pills (Cycle 1, Cycle 2, etc.) to view different cycles. Only cycles with dates set in Settings will be available.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Calendar Days</h3>
+                <p class="help-text">Each day shows the calendar date and cycle day (D-1, D0, D+1, etc.). Days are colour-coded:</p>
+                <ul class="help-list">
+                    <li><strong>Orange background:</strong> Chemotherapy day (Day 0)</li>
+                    <li><strong>Purple background:</strong> Injection day (Day +1)</li>
+                    <li><strong>Green border:</strong> Today</li>
+                    <li><strong>Green background with ✓:</strong> Completed days</li>
+                </ul>
+                <p class="help-text">Tap any day to view or edit that day's data in the Today view.</p>
+            </div>
+        </section>
+
+        <section class="help-section" id="cycle-trends">
+            <h2 class="help-section-title">Cycle Trends</h2>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Symptom Charts</h3>
+                <p class="help-text">Below the calendar, you'll find line charts showing how each symptom has varied across the cycle. These charts help you and your care team visualise patterns – for example, seeing when fatigue typically peaks or how long nausea lasts after treatment.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Reading the Charts</h3>
+                <ul class="help-list">
+                    <li>The horizontal axis shows cycle days from Day -1 to Day +20</li>
+                    <li>The vertical axis shows symptom levels from 0 to 5</li>
+                    <li>Gaps in the line indicate days where no data was recorded</li>
+                    <li>Tap or hover on data points to see the exact day and level</li>
+                </ul>
+            </div>
+
+            <div class="help-tip">
+                <div class="help-tip-title">Tip</div>
+                <div class="help-tip-text">Reviewing these charts before clinic appointments can help you give your oncologist a clear picture of how the cycle went, rather than relying on memory alone.</div>
+            </div>
+        </section>
+
+        <section class="help-section" id="settings">
+            <h2 class="help-section-title">Settings</h2>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Your Details</h3>
+                <p class="help-text">Enter your name and email address. Your first name is used in the daily greeting, and your full name appears on summary reports.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Emergency Contacts</h3>
+                <p class="help-text">Add phone numbers for your oncology unit, out-of-hours service, and GP. These appear on the Today screen for quick access – tap to dial.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Cycle Dates</h3>
+                <p class="help-text">Enter the Day 0 (chemotherapy day) for each cycle as you get scheduled. The app calculates all other days automatically. You can set up to 6 cycles.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Medications</h3>
+                <p class="help-text">View all your scheduled medications. You can:</p>
+                <ul class="help-list">
+                    <li><strong>Add</strong> new medications with the + button</li>
+                    <li><strong>Edit</strong> any medication by tapping it or the Edit link</li>
+                    <li><strong>Delete</strong> medications with the 🗑️ Delete link</li>
+                    <li><strong>Reset</strong> to the default schedule if needed</li>
+                </ul>
+                <p class="help-text">Each medication shows which times of day it's taken (checkboxes) and the day range.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Appearance</h3>
+                <p class="help-text">Toggle between dark and light mode, show or hide daily messages, and choose an accent colour that appears throughout the app.</p>
+            </div>
+        </section>
+
+        <section class="help-section" id="daily-summary">
+            <h2 class="help-section-title">Daily Summary</h2>
+            
+            <p class="help-text">Tap "Send Daily Summary Email" to generate a report of the day's data. This opens your email app with a pre-filled message containing:</p>
+            <ul class="help-list">
+                <li>Patient name and date</li>
+                <li>Cycle day and phase</li>
+                <li>All medications with taken/not taken status and times</li>
+                <li>PRN medications used</li>
+                <li>Symptom scores</li>
+                <li>Temperature and weight</li>
+                <li>Notes, food & drink, and today's win</li>
+            </ul>
+            
+            <div class="help-tip">
+                <div class="help-tip-title">Tip</div>
+                <div class="help-tip-text">Send the daily summary to a family member or caregiver to keep them informed, or use it as a record for clinic appointments.</div>
+            </div>
+        </section>
+
+        <section class="help-section" id="backup">
+            <h2 class="help-section-title">Backup & Restore</h2>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Why Back Up?</h3>
+                <p class="help-text">Your data is stored locally in your browser. It can be lost if you clear your browser data, switch devices, or reset your phone. Regular backups protect against this.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Export Backup</h3>
+                <p class="help-text">Downloads a JSON file containing all your data – medications, tracking history, settings, everything. Save this file somewhere safe like iCloud, Google Drive, or email it to yourself.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Import Backup</h3>
+                <p class="help-text">Restore from a previously exported backup file. This replaces your current data.</p>
+            </div>
+
+            <div class="help-subsection">
+                <h3 class="help-subsection-title">Clear All Data</h3>
+                <p class="help-text">Removes all tracking data permanently. Use with caution – this cannot be undone.</p>
+            </div>
+
+            <div class="help-tip">
+                <div class="help-tip-title">Recommendation</div>
+                <div class="help-tip-text">Back up at least once a week, or at the end of each cycle. The daily summary emails also serve as a partial backup of each day's data.</div>
+            </div>
+        </section>
+
+        <section class="help-section" id="tips">
+            <h2 class="help-section-title">Tips for Using Day by Day</h2>
+
+            <div class="help-tip">
+                <div class="help-tip-title">Build a Routine</div>
+                <div class="help-tip-text">Check the app at the same times each day – perhaps when you take your morning medications, after lunch, and before bed.</div>
+            </div>
+
+            <div class="help-tip">
+                <div class="help-tip-title">Log in Real Time</div>
+                <div class="help-tip-text">Mark medications as taken when you actually take them, not later. This gives you accurate timestamps and helps avoid confusion about what you've taken.</div>
+            </div>
+
+            <div class="help-tip">
+                <div class="help-tip-title">Use the Notes</div>
+                <div class="help-tip-text">Jot down anything that might be relevant – unusual symptoms, questions for your doctor, what you ate, how you slept. These notes can be invaluable at appointments.</div>
+            </div>
+
+            <div class="help-tip">
+                <div class="help-tip-title">Review Before Appointments</div>
+                <div class="help-tip-text">Before seeing your oncologist, look back through your tracked data, daily summaries, and cycle trend charts. This helps you give accurate information about how the cycle has gone.</div>
+            </div>
+
+            <div class="help-tip">
+                <div class="help-tip-title">Celebrate Small Wins</div>
+                <div class="help-tip-text">The "Today's Win" field isn't just for show. Noting positive moments, however small, can genuinely help maintain perspective during a challenging time.</div>
+            </div>
+        </section>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html" class="bottom-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg><span>Today</span></a>
+        <a href="index.html#calendar" class="bottom-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><span>Calendar</span></a>
+        <a href="index.html#settings" class="bottom-nav-item"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg><span>Settings</span></a>
+        <a href="help.html" class="bottom-nav-item active"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span>Help</span></a>
+    </nav>
+<script data-goatcounter="https://daybyday.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
