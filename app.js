@@ -1958,6 +1958,12 @@ function init() {
     renderAll();
     loadDailyQuote();
     
+    
+    // Check if there's a hash in the URL and switch to that view
+    const hash = window.location.hash.replace('#', '');
+    if (hash && ['today', 'calendar', 'settings'].includes(hash)) {
+        switchView(hash);
+    }
     document.querySelectorAll('.nav-tab, .bottom-nav-item').forEach(el => 
         el.addEventListener('click', () => switchView(el.dataset.view))
     );

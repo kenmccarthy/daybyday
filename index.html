@@ -15,6 +15,20 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:opsz,wght@9..144,300;9..144,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Load user preferences from localStorage BEFORE page renders
+        (function() {
+            try {
+                const state = JSON.parse(localStorage.getItem('chemoTrackerState') || '{}}');
+                if (state.theme === 'light') {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+                if (state.accentColour) {
+                    document.documentElement.style.setProperty('--accent-colour', state.accentColour);
+                }
+            } catch(e) {}
+        })();
+    </script>
 </head>
 <body>
     <div class="app-container">
