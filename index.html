@@ -263,5 +263,32 @@
     <script src="app.js"></script>
 <script data-goatcounter="https://daybyday.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
+<script>
+    // Register service worker for offline functionality
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('[App] Service Worker registered successfully:', registration.scope);
+
+                    // Check for updates periodically
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        console.log('[App] Service Worker update found');
+
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // New version available
+                                console.log('[App] New version available - will refresh on next visit');
+                            }
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.log('[App] Service Worker registration failed:', error);
+                });
+        });
+    }
+</script>
 </body>
 </html>
