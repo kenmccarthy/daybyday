@@ -357,6 +357,15 @@ function renderHeader() {
     } else {
         greeting.style.display = 'none';
     }
+
+    // Show/hide "Back to Today" button
+    const backToTodayBtn = document.getElementById('backToTodayBtn');
+    if (state.currentView === 'today' && !isToday) {
+        backToTodayBtn.style.display = 'flex';
+    } else {
+        backToTodayBtn.style.display = 'none';
+    }
+
     updateProgress();
 }
 
@@ -2115,6 +2124,15 @@ function init() {
         touchEndY = e.changedTouches[0].screenY;
         handleSwipe();
     }, { passive: true });
+
+    // Back to Today button
+    document.getElementById('backToTodayBtn').addEventListener('click', () => {
+        state.selectedDate = new Date();
+        saveState();
+        renderAll();
+        updateProgress();
+        showToast('Back to today');
+    });
 }
 
 document.addEventListener('DOMContentLoaded', init);
