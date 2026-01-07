@@ -350,7 +350,7 @@ function renderHeader() {
         } else if (isToday) {
             greetingText = getTimeOfDayGreeting() + ', ' + firstName + '.';
         } else {
-            greetingText = firstName + "'s Medication Tracker";
+            greetingText = firstName + "'s Cycle Tracker";
         }
         greeting.textContent = greetingText;
         greeting.style.display = 'block';
@@ -1662,8 +1662,9 @@ function generateCycleSummaryPDF() {
     html += '<table class="pdf-table">';
     html += '<thead><tr><th>Medication</th><th>Dose</th><th>Adherence</th><th></th></tr></thead>';
     html += '<tbody>';
-    
-    Object.values(medAdherence).forEach(med => {
+
+    // Sort medications alphabetically by name
+    Object.values(medAdherence).sort((a, b) => a.name.localeCompare(b.name)).forEach(med => {
         const pct = med.scheduled > 0 ? Math.round((med.taken / med.scheduled) * 100) : 0;
         html += '<tr>';
         html += '<td>' + med.name + '</td>';
@@ -1684,8 +1685,9 @@ function generateCycleSummaryPDF() {
         html += '<table class="pdf-table">';
         html += '<thead><tr><th>Medication</th><th>Dose</th><th>Total Doses</th><th>Days Used</th></tr></thead>';
         html += '<tbody>';
-        
-        usedPRN.forEach(med => {
+
+        // Sort PRN medications alphabetically by name
+        usedPRN.sort((a, b) => a.name.localeCompare(b.name)).forEach(med => {
             html += '<tr>';
             html += '<td>' + med.name + '</td>';
             html += '<td>' + med.dose + '</td>';
@@ -2035,6 +2037,84 @@ function init() {
     document.getElementById('medModal').addEventListener('click', (e) => {
         if (e.target.id === 'medModal') hideMedicationModal();
     });
+
+    // Touch gesture navigation (swipe left/right to navigate days)
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+
+    const SWIPE_THRESHOLD = 50; // Minimum distance in pixels for swipe
+    const SWIPE_MAX_VERTICAL = 30; // Maximum vertical movement to still count as swipe
+
+    function handleSwipe() {
+        const diffX = touchEndX - touchStartX;
+        const diffY = Math.abs(touchEndY - touchStartY);
+
+        // Ignore if too much vertical movement (user is scrolling)
+        if (diffY > SWIPE_MAX_VERTICAL) return;
+
+        // Ignore if swipe too short
+        if (Math.abs(diffX) < SWIPE_THRESHOLD) return;
+
+        if (diffX > 0) {
+            // Swipe right - go to previous day
+            navigateDays(-1);
+        } else {
+            // Swipe left - go to next day
+            navigateDays(1);
+        }
+    }
+
+    function navigateDays(direction) {
+        const newDate = new Date(state.selectedDate);
+        newDate.setDate(newDate.getDate() + direction);
+
+        // Don't navigate beyond reasonable bounds
+        const today = new Date();
+        const maxFutureDate = new Date(today);
+        maxFutureDate.setDate(maxFutureDate.getDate() + 60);
+
+        // Check if the date has an associated cycle
+        const info = getCycleInfo(newDate);
+        if (!info.cycle || newDate > maxFutureDate) {
+            showToast("Can't navigate to that date");
+            return;
+        }
+
+        state.selectedDate = newDate;
+        saveState();
+        renderAll();
+        updateProgress();
+
+        // Show toast feedback
+        const dayInfo = getDaySchedule(newDate);
+        const dateStr = newDate.toLocaleDateString('en-IE', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short'
+        });
+        showToast(`${dayInfo.label} • ${dateStr}`);
+    }
+
+    // Add touch listeners to today view
+    const todayView = document.getElementById('todayView');
+    todayView.addEventListener('touchstart', (e) => {
+        // Don't interfere with text input/selection
+        if (e.target.matches('textarea, input, button, a')) return;
+
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    todayView.addEventListener('touchend', (e) => {
+        // Don't interfere with text input/selection
+        if (e.target.matches('textarea, input, button, a')) return;
+
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+    }, { passive: true });
 }
 
 document.addEventListener('DOMContentLoaded', init);
