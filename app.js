@@ -58,10 +58,10 @@ for (let i = 4; i <= 12; i++) {
     };
 }
 
-// Add days 13-20 (without Loratadine)
-for (let i = 13; i <= 20; i++) {
+// Add days 13-19 (without Loratadine)
+for (let i = 13; i <= 19; i++) {
     scheduleTemplate[i.toString()] = {
-        label: 'Day +' + i, note: i === 20 ? 'End of cycle' : 'Recovery',
+        label: 'Day +' + i, note: i === 19 ? 'End of cycle' : 'Recovery',
         medications: {
             morning: [{ name: 'Pantoprazole', dose: '40 mg' },{ name: 'Mycostatin', dose: '1 ml' },{ name: 'Difflam/Kin', dose: 'mouthwash' }],
             afternoon: [{ name: 'Mycostatin', dose: '1 ml' },{ name: 'Difflam/Kin', dose: 'mouthwash' }],
@@ -262,7 +262,7 @@ function getCycleInfo(date) {
         if (!chemoDate) continue;
         const day0 = new Date(chemoDate);
         const cycleStart = new Date(day0); cycleStart.setDate(cycleStart.getDate() - 1);
-        const cycleEnd = new Date(day0); cycleEnd.setDate(cycleEnd.getDate() + 20);
+        const cycleEnd = new Date(day0); cycleEnd.setDate(cycleEnd.getDate() + 19);
         if (date >= cycleStart && date <= cycleEnd) {
             const diffDays = Math.floor((date - cycleStart) / (1000*60*60*24)) - 1;
             return { cycle, dayNum: diffDays };
@@ -511,28 +511,28 @@ function renderCalendar() {
     if (chemoDateStr) {
         const day0 = new Date(chemoDateStr);
         const cycleStart = new Date(day0); cycleStart.setDate(cycleStart.getDate() - 1);
-        const cycleEnd = new Date(day0); cycleEnd.setDate(cycleEnd.getDate() + 20);
+        const cycleEnd = new Date(day0); cycleEnd.setDate(cycleEnd.getDate() + 19);
         
-        // Calculate days completed (0-23)
+        // Calculate days completed (0-21)
         let daysCompleted = 0;
         let currentDayNum = -2; // Before cycle
-        
+
         if (today >= cycleStart) {
             const diffDays = Math.floor((today - cycleStart) / (1000*60*60*24));
-            daysCompleted = Math.min(diffDays + 1, 22); // +1 because day -1 is day 1 of 23
-            currentDayNum = diffDays - 1; // Convert to cycle day number (-1 to +21)
+            daysCompleted = Math.min(diffDays + 1, 21); // +1 because day -1 is day 1 of 21
+            currentDayNum = diffDays - 1; // Convert to cycle day number (-1 to +19)
         }
         if (today > cycleEnd) {
-            daysCompleted = 22;
-            currentDayNum = 22; // Past cycle
+            daysCompleted = 21;
+            currentDayNum = 21; // Past cycle
         }
-        
-        const pct = Math.round((daysCompleted / 22) * 100);
-        const currentDayLabel = currentDayNum < -1 ? 'Not started' : 
-                                currentDayNum > 20 ? 'Complete' : 
+
+        const pct = Math.round((daysCompleted / 21) * 100);
+        const currentDayLabel = currentDayNum < -1 ? 'Not started' :
+                                currentDayNum > 19 ? 'Complete' :
                                 'Day ' + (currentDayNum <= 0 ? currentDayNum : '+' + currentDayNum);
-        
-        document.getElementById('cycleProgressText').textContent = currentDayLabel + ' • ' + daysCompleted + ' of 22 days';
+
+        document.getElementById('cycleProgressText').textContent = currentDayLabel + ' • ' + daysCompleted + ' of 21 days';
         document.getElementById('cycleProgressFill').style.width = pct + '%';
         document.getElementById('cycleProgressPercent').textContent = pct + '%';
         progressCard.style.display = 'block';
@@ -571,7 +571,7 @@ function renderCalendar() {
     let html = days.map(d => '<div class="calendar-header">'+d+'</div>').join('');
     for (let i = 0; i < startDayOfWeek; i++) html += '<div class="calendar-day empty"></div>';
     
-    for (let dayNum = -1; dayNum <= 20; dayNum++) {
+    for (let dayNum = -1; dayNum <= 19; dayNum++) {
         const currentDate = new Date(day0); currentDate.setDate(currentDate.getDate() + dayNum);
         const dk = formatDate(currentDate);
         const sch = scheduleTemplate[dayNum.toString()];
@@ -640,7 +640,7 @@ function renderCycleTrends() {
     });
     
     // Gather data for each day in the cycle
-    for (let dayNum = -1; dayNum <= 20; dayNum++) {
+    for (let dayNum = -1; dayNum <= 19; dayNum++) {
         const currentDate = new Date(day0);
         currentDate.setDate(currentDate.getDate() + dayNum);
         const dk = formatDate(currentDate);
@@ -660,13 +660,13 @@ function renderCycleTrends() {
         html += '<span class="chart-title">' + s.label + '</span>';
         html += '</div>';
         html += '<div class="chart-wrapper"><canvas id="chart-' + s.id + '"></canvas></div>';
-        html += '<div class="chart-labels"><span>Day -1</span><span>Day +20</span></div>';
+        html += '<div class="chart-labels"><span>Day -1</span><span>Day +19</span></div>';
         html += '</div>';
     });
     container.innerHTML = html;
     
     // Create charts
-    const dayLabels = Array.from({length: 22}, (_, i) => {
+    const dayLabels = Array.from({length: 21}, (_, i) => {
         const d = i - 1;
         return d <= 0 ? d.toString() : '+' + d;
     });
@@ -1381,7 +1381,7 @@ function populateDaySelects() {
     const startSelect = document.getElementById('medStartDay');
     const endSelect = document.getElementById('medEndDay');
     let options = '';
-    for (let d = -1; d <= 20; d++) {
+    for (let d = -1; d <= 19; d++) {
         const label = d <= 0 ? 'Day ' + d : 'Day +' + d;
         options += '<option value="' + d + '">' + label + '</option>';
     }
@@ -1494,7 +1494,7 @@ function generateCycleSummaryPDF() {
     const cycleStart = new Date(day0);
     cycleStart.setDate(cycleStart.getDate() - 1);
     const cycleEnd = new Date(day0);
-    cycleEnd.setDate(cycleEnd.getDate() + 20);
+    cycleEnd.setDate(cycleEnd.getDate() + 19);
     const today = new Date();
     
     const patientName = state.patientName || 'Patient';
@@ -1517,11 +1517,11 @@ function generateCycleSummaryPDF() {
     let currentDayInCycle = -2;
     if (today >= cycleStart) {
         const diffDays = Math.floor((today - cycleStart) / (1000*60*60*24));
-        daysCompleted = Math.min(diffDays + 1, 22);
+        daysCompleted = Math.min(diffDays + 1, 21);
         currentDayInCycle = diffDays - 1;
     }
     if (today > cycleEnd) {
-        daysCompleted = 22;
+        daysCompleted = 21;
     }
     
     // Collect all cycle data
@@ -1555,7 +1555,7 @@ function generateCycleSummaryPDF() {
     });
     
     // Iterate through each day
-    for (let dayNum = -1; dayNum <= 20; dayNum++) {
+    for (let dayNum = -1; dayNum <= 19; dayNum++) {
         const currentDate = new Date(day0);
         currentDate.setDate(currentDate.getDate() + dayNum);
         const dk = formatDate(currentDate);
@@ -1674,7 +1674,7 @@ function generateCycleSummaryPDF() {
     html += '<div class="pdf-section">';
     html += '<div class="pdf-section-title">Overview</div>';
     html += '<div class="pdf-overview-grid">';
-    html += '<div class="pdf-stat-card"><div class="pdf-stat-value">' + daysCompleted + ' / 22</div><div class="pdf-stat-label">Days Completed</div></div>';
+    html += '<div class="pdf-stat-card"><div class="pdf-stat-value">' + daysCompleted + ' / 21</div><div class="pdf-stat-label">Days Completed</div></div>';
     html += '<div class="pdf-stat-card"><div class="pdf-stat-value">' + overallAdherence + '%</div><div class="pdf-stat-label">Medication Adherence</div></div>';
     
     if (weightChange) {
