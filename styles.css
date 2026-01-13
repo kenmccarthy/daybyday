@@ -303,6 +303,13 @@ body { padding-bottom: 100px; }
 .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card-hover); color: var(--text-primary); padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 500; box-shadow: var(--shadow); opacity: 0; transition: all 0.3s ease; z-index: 200; max-width: 90%; text-align: center; border: 1px solid var(--border); }
 .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+/* Update notification */
+.update-notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--accent-colour, var(--accent-evening)); color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 500; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 300; max-width: 90%; display: flex; align-items: center; gap: 16px; animation: slideDown 0.3s ease; }
+.update-notification span { flex: 1; }
+.update-notification button { background: white; color: var(--accent-colour, var(--accent-evening)); border: none; padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.update-notification button:active { transform: scale(0.95); }
+@keyframes slideDown { from { transform: translateX(-50%) translateY(-100px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+
 /* Animations */
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 .med-card, .prn-card, .symptom-card, .settings-card { animation: fadeIn 0.3s ease backwards; }
