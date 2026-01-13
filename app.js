@@ -103,6 +103,8 @@ let state = {
     weights: {},
     patientName: '',
     patientEmail: '',
+    patientDob: '',
+    patientHospitalNumber: '',
     emergencyContacts: {
         oncologyUnit: '',
         outOfHours: '',
@@ -758,6 +760,8 @@ function renderWin() {
 function renderSettings() {
     document.getElementById('patientNameInput').value = state.patientName || '';
     document.getElementById('patientEmailInput').value = state.patientEmail || '';
+    document.getElementById('patientDobInput').value = state.patientDob || '';
+    document.getElementById('patientHospitalNumberInput').value = state.patientHospitalNumber || '';
     document.getElementById('oncologyUnitInput').value = state.emergencyContacts.oncologyUnit || '';
     document.getElementById('outOfHoursInput').value = state.emergencyContacts.outOfHours || '';
     document.getElementById('gpInput').value = state.emergencyContacts.gp || '';
@@ -934,6 +938,8 @@ function generateDailySummary() {
     let summary = 'DAY BY DAY - DAILY SUMMARY\n';
     summary += '══════════════════════════════\n\n';
     summary += 'Patient: ' + patientName + '\n';
+    if (state.patientDob) summary += 'Date of Birth: ' + state.patientDob + '\n';
+    if (state.patientHospitalNumber) summary += 'Patient / Hospital Number: ' + state.patientHospitalNumber + '\n';
     summary += 'Date: ' + dateStr + '\n';
     summary += 'Cycle Day: ' + dayLabel + '\n\n';
     
@@ -1157,6 +1163,8 @@ function clearAllData() {
 function savePatientDetails() {
     state.patientName = document.getElementById('patientNameInput').value.trim();
     state.patientEmail = document.getElementById('patientEmailInput').value.trim();
+    state.patientDob = document.getElementById('patientDobInput').value.trim();
+    state.patientHospitalNumber = document.getElementById('patientHospitalNumberInput').value.trim();
     saveState();
     renderHeader();
     showToast('Details saved ✓');
@@ -1636,6 +1644,12 @@ function generateCycleSummaryPDF() {
     html += '<div class="pdf-report-header">';
     html += '<div class="pdf-report-title">Day by Day – Cycle Summary</div>';
     html += '<div class="pdf-report-subtitle">' + patientName + '</div>';
+    if (state.patientDob || state.patientHospitalNumber) {
+        html += '<div class="pdf-report-patient-info">';
+        if (state.patientDob) html += '<span>DOB: ' + state.patientDob + '</span>';
+        if (state.patientHospitalNumber) html += '<span>Patient / Hospital Number: ' + state.patientHospitalNumber + '</span>';
+        html += '</div>';
+    }
     html += '<div class="pdf-report-meta">';
     html += '<span><strong>Cycle ' + state.selectedCycle + '</strong></span>';
     html += '<span>' + startDateStr + ' – ' + endDateStr + '</span>';
@@ -1850,6 +1864,7 @@ function generateCycleSummaryPDF() {
     fullHtml += '.pdf-report-header { border-bottom: 2px solid #2a9d8f; padding-bottom: 12px; margin-bottom: 16px; }';
     fullHtml += '.pdf-report-title { font-size: 20px; font-weight: 600; margin: 0 0 2px 0; }';
     fullHtml += '.pdf-report-subtitle { font-size: 14px; color: #5a5a72; }';
+    fullHtml += '.pdf-report-patient-info { display: flex; gap: 20px; margin-top: 4px; font-size: 11px; color: #5a5a72; }';
     fullHtml += '.pdf-report-meta { display: flex; gap: 20px; margin-top: 8px; font-size: 11px; color: #5a5a72; }';
     fullHtml += '.pdf-section { margin-bottom: 16px; }';
     fullHtml += '.pdf-section-title { font-size: 13px; font-weight: 600; color: #2a9d8f; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #e0e0e0; }';
