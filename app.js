@@ -934,11 +934,18 @@ function generateDailySummary() {
     const patientName = state.patientName || 'Patient';
     const dateStr = days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
     const dayLabel = s ? 'Cycle ' + s.cycle + ' - ' + s.label + ' - ' + s.note : 'No schedule';
-    
+
+    // Format date of birth if present
+    let dobStr = '';
+    if (state.patientDob) {
+        const dobDate = new Date(state.patientDob + 'T00:00:00');
+        dobStr = dobDate.getDate() + ' ' + months[dobDate.getMonth()] + ' ' + dobDate.getFullYear();
+    }
+
     let summary = 'DAY BY DAY - DAILY SUMMARY\n';
     summary += '══════════════════════════════\n\n';
     summary += 'Patient: ' + patientName + '\n';
-    if (state.patientDob) summary += 'Date of Birth: ' + state.patientDob + '\n';
+    if (dobStr) summary += 'Date of Birth: ' + dobStr + '\n';
     if (state.patientHospitalNumber) summary += 'Patient / Hospital Number: ' + state.patientHospitalNumber + '\n';
     summary += 'Date: ' + dateStr + '\n';
     summary += 'Cycle Day: ' + dayLabel + '\n\n';
@@ -1492,7 +1499,14 @@ function generateCycleSummaryPDF() {
     
     const patientName = state.patientName || 'Patient';
     const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    
+
+    // Format date of birth if present
+    let dobStr = '';
+    if (state.patientDob) {
+        const dobDate = new Date(state.patientDob + 'T00:00:00');
+        dobStr = dobDate.getDate() + ' ' + months[dobDate.getMonth()] + ' ' + dobDate.getFullYear();
+    }
+
     // Calculate date range
     const startDateStr = cycleStart.getDate() + ' ' + months[cycleStart.getMonth()] + ' ' + cycleStart.getFullYear();
     const endDateStr = cycleEnd.getDate() + ' ' + months[cycleEnd.getMonth()] + ' ' + cycleEnd.getFullYear();
@@ -1644,9 +1658,9 @@ function generateCycleSummaryPDF() {
     html += '<div class="pdf-report-header">';
     html += '<div class="pdf-report-title">Day by Day – Cycle Summary</div>';
     html += '<div class="pdf-report-subtitle">' + patientName + '</div>';
-    if (state.patientDob || state.patientHospitalNumber) {
+    if (dobStr || state.patientHospitalNumber) {
         html += '<div class="pdf-report-patient-info">';
-        if (state.patientDob) html += '<span>DOB: ' + state.patientDob + '</span>';
+        if (dobStr) html += '<span>DOB: ' + dobStr + '</span>';
         if (state.patientHospitalNumber) html += '<span>Patient / Hospital Number: ' + state.patientHospitalNumber + '</span>';
         html += '</div>';
     }
