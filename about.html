@@ -22,6 +22,9 @@
                 const state = JSON.parse(localStorage.getItem('chemoTrackerState') || '{}');
                 if (state.theme === 'light') {
                     document.documentElement.setAttribute('data-theme', 'light');
+                    document.getElementById('themeColor').content = '#f5f5f7';
+                } else {
+                    document.getElementById('themeColor').content = '#1a1a2e';
                 }
                 if (state.accentColour) {
                     document.documentElement.style.setProperty('--accent-colour', state.accentColour);
