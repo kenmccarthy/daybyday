@@ -274,20 +274,54 @@
 <script>
     // Register service worker for offline functionality
     if ('serviceWorker' in navigator) {
+        let refreshing = false;
+
+        // Reload page when new service worker takes control
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            refreshing = true;
+            window.location.reload();
+        });
+
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js')
                 .then(registration => {
                     console.log('[App] Service Worker registered successfully:', registration.scope);
 
-                    // Check for updates periodically
+                    // Check for updates when app becomes visible
+                    document.addEventListener('visibilitychange', () => {
+                        if (!document.hidden) {
+                            registration.update();
+                        }
+                    });
+
+                    // Check for updates periodically (every hour)
+                    setInterval(() => {
+                        registration.update();
+                    }, 60 * 60 * 1000);
+
+                    // Handle updates
                     registration.addEventListener('updatefound', () => {
                         const newWorker = registration.installing;
                         console.log('[App] Service Worker update found');
 
                         newWorker.addEventListener('statechange', () => {
                             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                // New version available
-                                console.log('[App] New version available - will refresh on next visit');
+                                // New version available - show notification
+                                console.log('[App] New version available');
+
+                                // Show update notification with reload option
+                                const updateMsg = document.createElement('div');
+                                updateMsg.className = 'update-notification';
+                                updateMsg.innerHTML = '<span>New version available!</span><button onclick="location.reload()">Update Now</button>';
+                                document.body.appendChild(updateMsg);
+
+                                // Auto-dismiss after 10 seconds
+                                setTimeout(() => {
+                                    if (updateMsg.parentNode) {
+                                        updateMsg.remove();
+                                    }
+                                }, 10000);
                             }
                         });
                     });
