@@ -90,13 +90,13 @@ const symptomsConfig = [
     { id: 'concentration', label: 'Concentration', icon: '🎯', lowLabel: 'Poor', highLabel: 'Good', scaleType: 'reversed' }
 ];
 
-let state = { 
-    currentView: 'today', 
-    selectedDate: new Date(), 
+let state = {
+    currentView: 'today',
+    selectedDate: new Date(),
     selectedCycle: 1,
-    takenMeds: {}, 
-    prnTaken: {}, 
-    symptoms: {}, 
+    takenMeds: {},
+    prnTaken: {},
+    symptoms: {},
     notes: {},
     food: {},
     wins: {},
@@ -116,6 +116,8 @@ let state = {
     collapsedSections: {},
     medications: [],
     medicationsInitialised: false,
+    cycleLength: 21,           // NEW: configurable cycle length in days (default 21)
+    numberOfCycles: 6,          // NEW: configurable number of cycles (default 6)
     cycleDates: {
         1: '2025-12-22',
         2: '2026-01-13',
@@ -183,11 +185,33 @@ function generateDefaultMedications() {
     return meds;
 }
 
-function loadState() { 
-    try { 
-        const s = localStorage.getItem('chemoTrackerState'); 
+function loadState() {
+    try {
+        const s = localStorage.getItem('chemoTrackerState');
         if (s) state = { ...state, ...JSON.parse(s) };
-        
+
+        // Backward compatibility: add cycleLength and numberOfCycles if missing
+        let needsSave = false;
+        if (state.cycleLength === undefined) {
+            state.cycleLength = 21;
+            needsSave = true;
+        }
+        if (state.numberOfCycles === undefined) {
+            state.numberOfCycles = 6;
+            needsSave = true;
+        }
+
+        // Ensure cycleDates object matches numberOfCycles
+        const currentCycleKeys = Object.keys(state.cycleDates || {}).length;
+        if (currentCycleKeys !== state.numberOfCycles) {
+            const newCycleDates = {};
+            for (let i = 1; i <= state.numberOfCycles; i++) {
+                newCycleDates[i] = state.cycleDates[i] || '';
+            }
+            state.cycleDates = newCycleDates;
+            needsSave = true;
+        }
+
         // Migrate from old customMedications format
         if (state.customMedications && state.customMedications.length > 0 && !state.medicationsInitialised) {
             state.medications = generateDefaultMedications();
@@ -199,19 +223,18 @@ function loadState() {
             });
             state.medicationsInitialised = true;
             delete state.customMedications;
-            saveState();
+            needsSave = true;
         }
-        
+
         // Initialise medications from template if not done
         if (!state.medicationsInitialised) {
             state.medications = generateDefaultMedications();
             state.medicationsInitialised = true;
-            saveState();
+            needsSave = true;
         }
-        
+
         // Migrate from midday to afternoon (v5 to v6)
         if (state.medications && state.medications.length > 0) {
-            let needsSave = false;
             state.medications.forEach(med => {
                 if (med.timesOfDay && med.timesOfDay.includes('midday')) {
                     med.timesOfDay = med.timesOfDay.map(t => t === 'midday' ? 'afternoon' : t);
@@ -229,11 +252,12 @@ function loadState() {
                 delete state.collapsedSections.midday;
                 needsSave = true;
             }
-            if (needsSave) saveState();
         }
-        
+
+        if (needsSave) saveState();
+
         applyTheme();
-    } catch(e) { console.error('loadState error:', e); } 
+    } catch(e) { console.error('loadState error:', e); }
 }
 
 function saveState() { 
@@ -257,12 +281,13 @@ function formatDate(d) { return d.toISOString().split('T')[0]; }
 
 function getCycleInfo(date) {
     const dateStr = formatDate(date);
-    for (let cycle = 1; cycle <= 6; cycle++) {
+    for (let cycle = 1; cycle <= state.numberOfCycles; cycle++) {
         const chemoDate = state.cycleDates[cycle];
         if (!chemoDate) continue;
         const day0 = new Date(chemoDate);
         const cycleStart = new Date(day0); cycleStart.setDate(cycleStart.getDate() - 1);
-        const cycleEnd = new Date(day0); cycleEnd.setDate(cycleEnd.getDate() + 19);
+        const cycleDaysAfterChemo = state.cycleLength - 2; // -1 for day before, -1 for day 0
+        const cycleEnd = new Date(day0); cycleEnd.setDate(cycleEnd.getDate() + cycleDaysAfterChemo);
         if (date >= cycleStart && date <= cycleEnd) {
             const diffDays = Math.floor((date - cycleStart) / (1000*60*60*24)) - 1;
             return { cycle, dayNum: diffDays };
@@ -506,44 +531,50 @@ function renderCalendar() {
     const chemoDateStr = state.cycleDates[state.selectedCycle];
     const progressCard = document.getElementById('cycleProgressCard');
     const today = new Date();
-    
+
+    // Calculate dynamic cycle boundaries
+    const cycleDaysAfterChemo = state.cycleLength - 2; // -1 for day before, -1 for day 0
+    const maxDayNum = cycleDaysAfterChemo;
+
     // Update cycle progress
     if (chemoDateStr) {
         const day0 = new Date(chemoDateStr);
         const cycleStart = new Date(day0); cycleStart.setDate(cycleStart.getDate() - 1);
-        const cycleEnd = new Date(day0); cycleEnd.setDate(cycleEnd.getDate() + 19);
-        
-        // Calculate days completed (0-21)
+        const cycleEnd = new Date(day0); cycleEnd.setDate(cycleEnd.getDate() + maxDayNum);
+
+        // Calculate days completed
         let daysCompleted = 0;
         let currentDayNum = -2; // Before cycle
 
         if (today >= cycleStart) {
             const diffDays = Math.floor((today - cycleStart) / (1000*60*60*24));
-            daysCompleted = Math.min(diffDays + 1, 21); // +1 because day -1 is day 1 of 21
-            currentDayNum = diffDays - 1; // Convert to cycle day number (-1 to +19)
+            daysCompleted = Math.min(diffDays + 1, state.cycleLength);
+            currentDayNum = diffDays - 1; // Convert to cycle day number (-1 to +maxDayNum)
         }
         if (today > cycleEnd) {
-            daysCompleted = 21;
-            currentDayNum = 21; // Past cycle
+            daysCompleted = state.cycleLength;
+            currentDayNum = state.cycleLength; // Past cycle
         }
 
-        const pct = Math.round((daysCompleted / 21) * 100);
+        const pct = Math.round((daysCompleted / state.cycleLength) * 100);
         const currentDayLabel = currentDayNum < -1 ? 'Not started' :
-                                currentDayNum > 19 ? 'Complete' :
+                                currentDayNum > maxDayNum ? 'Complete' :
                                 'Day ' + (currentDayNum <= 0 ? currentDayNum : '+' + currentDayNum);
 
-        document.getElementById('cycleProgressText').textContent = currentDayLabel + ' • ' + daysCompleted + ' of 21 days';
+        document.getElementById('cycleProgressText').textContent = currentDayLabel + ' • ' + daysCompleted + ' of ' + state.cycleLength + ' days';
         document.getElementById('cycleProgressFill').style.width = pct + '%';
         document.getElementById('cycleProgressPercent').textContent = pct + '%';
+        document.getElementById('cycleProgressStartLabel').textContent = 'Day -1';
+        document.getElementById('cycleProgressEndLabel').textContent = 'Day +' + maxDayNum;
         progressCard.style.display = 'block';
     } else {
         progressCard.style.display = 'none';
     }
-    
+
     // Render cycle selector
     const cs = document.getElementById('cycleSelector');
     let csHtml = '';
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= state.numberOfCycles; i++) {
         const hasDate = state.cycleDates[i];
         const isFuture = hasDate && new Date(hasDate) > new Date();
         csHtml += '<div class="cycle-pill'+(state.selectedCycle === i ? ' active' : '')+(isFuture && !hasDate ? ' future' : '')+'" data-cycle="'+i+'">Cycle '+i+'</div>';
@@ -558,46 +589,46 @@ function renderCalendar() {
             }
         });
     });
-    
+
     // Render calendar for selected cycle
     const g = document.getElementById('calendarGrid');
     if (!chemoDateStr) { g.innerHTML = '<div class="empty-state">No date set for this cycle</div>'; return; }
-    
+
     const day0 = new Date(chemoDateStr);
     const cycleStart = new Date(day0); cycleStart.setDate(cycleStart.getDate() - 1);
     const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const startDayOfWeek = cycleStart.getDay();
-    
+
     let html = days.map(d => '<div class="calendar-header">'+d+'</div>').join('');
     for (let i = 0; i < startDayOfWeek; i++) html += '<div class="calendar-day empty"></div>';
-    
-    for (let dayNum = -1; dayNum <= 19; dayNum++) {
+
+    for (let dayNum = -1; dayNum <= maxDayNum; dayNum++) {
         const currentDate = new Date(day0); currentDate.setDate(currentDate.getDate() + dayNum);
         const dk = formatDate(currentDate);
         const sch = scheduleTemplate[dayNum.toString()];
         const isToday = dk === formatDate(today);
-        
+
         let cls = ['calendar-day'];
         if (isToday) cls.push('today');
         if (sch?.isChemoDay) cls.push('chemo');
         if (sch?.isInjectionDay) cls.push('injection');
         if (currentDate < today) cls.push('completed');
-        
+
         const cdl = dayNum <= 0 ? dayNum : '+'+dayNum;
         html += '<div class="'+cls.join(' ')+'" data-date="'+dk+'"><span class="day-num">'+currentDate.getDate()+'</span><span class="cycle-day">D'+cdl+'</span></div>';
     }
-    
+
     g.innerHTML = html;
-    g.querySelectorAll('.calendar-day:not(.empty)').forEach(day => { 
-        day.addEventListener('click', () => { 
-            if (day.dataset.date) { 
-                state.selectedDate = new Date(day.dataset.date); 
-                renderAll(); 
-                switchView('today'); 
-            } 
-        }); 
+    g.querySelectorAll('.calendar-day:not(.empty)').forEach(day => {
+        day.addEventListener('click', () => {
+            if (day.dataset.date) {
+                state.selectedDate = new Date(day.dataset.date);
+                renderAll();
+                switchView('today');
+            }
+        });
     });
-    
+
     // Render symptom trend charts
     renderCycleTrends();
 }
@@ -640,19 +671,21 @@ function renderCycleTrends() {
     });
     
     // Gather data for each day in the cycle
-    for (let dayNum = -1; dayNum <= 19; dayNum++) {
+    const cycleDaysAfterChemo = state.cycleLength - 2;
+    for (let dayNum = -1; dayNum <= cycleDaysAfterChemo; dayNum++) {
         const currentDate = new Date(day0);
         currentDate.setDate(currentDate.getDate() + dayNum);
         const dk = formatDate(currentDate);
         const daySymptoms = state.symptoms[dk] || {};
-        
+
         symptomsConfig.forEach(s => {
             cycleData[s.id].push(daySymptoms[s.id] || null);
         });
     }
-    
+
     // Generate HTML for chart cards
     let html = '';
+    const lastDayLabel = 'Day +' + cycleDaysAfterChemo;
     symptomsConfig.forEach(s => {
         html += '<div class="chart-card">';
         html += '<div class="chart-header">';
@@ -660,7 +693,7 @@ function renderCycleTrends() {
         html += '<span class="chart-title">' + s.label + '</span>';
         html += '</div>';
         html += '<div class="chart-wrapper"><canvas id="chart-' + s.id + '"></canvas></div>';
-        html += '<div class="chart-labels"><span>Day -1</span><span>Day +19</span></div>';
+        html += '<div class="chart-labels"><span>Day -1</span><span>' + lastDayLabel + '</span></div>';
         html += '</div>';
     });
     container.innerHTML = html;
@@ -757,6 +790,23 @@ function renderWin() {
     document.getElementById('winTextarea').value = state.wins[formatDate(state.selectedDate)] || '';
 }
 
+function renderCycleDatesInputs() {
+    const container = document.getElementById('cycleDatesContainer');
+    if (!container) return;
+
+    let html = '';
+    const cyclesPerRow = 2;
+    for (let i = 1; i <= state.numberOfCycles; i += cyclesPerRow) {
+        html += '<div class="settings-row">';
+        for (let j = 0; j < cyclesPerRow && (i + j) <= state.numberOfCycles; j++) {
+            const cycleNum = i + j;
+            html += '<div><label>Cycle ' + cycleNum + '</label><input type="date" class="settings-input cycle-date-input" id="cycle' + cycleNum + 'Date" value="' + (state.cycleDates[cycleNum] || '') + '"></div>';
+        }
+        html += '</div>';
+    }
+    container.innerHTML = html;
+}
+
 function renderSettings() {
     document.getElementById('patientNameInput').value = state.patientName || '';
     document.getElementById('patientEmailInput').value = state.patientEmail || '';
@@ -767,18 +817,22 @@ function renderSettings() {
     document.getElementById('gpInput').value = state.emergencyContacts.gp || '';
     document.getElementById('themeToggle').classList.toggle('active', state.theme === 'light');
     document.getElementById('showMessagesToggle').classList.toggle('active', state.showDailyMessages !== false);
-    for (let i = 1; i <= 6; i++) {
-        document.getElementById('cycle'+i+'Date').value = state.cycleDates[i] || '';
-    }
-    
+
+    // Update cycle configuration inputs
+    document.getElementById('cycleLengthInput').value = state.cycleLength || 21;
+    document.getElementById('numberOfCyclesInput').value = state.numberOfCycles || 6;
+
+    // Render cycle date inputs dynamically
+    renderCycleDatesInputs();
+
     // Update colour picker
     document.querySelectorAll('.colour-option').forEach(opt => {
         opt.classList.toggle('selected', opt.dataset.colour === state.accentColour);
     });
-    
+
     // Update last backup display
     updateLastBackupDisplay();
-    
+
     // Render medications list
     renderMedicationsList();
 }
@@ -1186,9 +1240,44 @@ function saveEmergencyContacts() {
     showToast('Emergency contacts saved ✓');
 }
 
+function saveCycleConfiguration() {
+    const newCycleLength = parseInt(document.getElementById('cycleLengthInput').value);
+    const newNumberOfCycles = parseInt(document.getElementById('numberOfCyclesInput').value);
+
+    // Validate inputs
+    if (newCycleLength < 1 || newCycleLength > 60) {
+        showToast('Cycle length must be between 1 and 60 days');
+        return;
+    }
+    if (newNumberOfCycles < 1 || newNumberOfCycles > 12) {
+        showToast('Number of cycles must be between 1 and 12');
+        return;
+    }
+
+    // Update cycle configuration
+    state.cycleLength = newCycleLength;
+    state.numberOfCycles = newNumberOfCycles;
+
+    // Adjust cycleDates object to match new numberOfCycles
+    const newCycleDates = {};
+    for (let i = 1; i <= newNumberOfCycles; i++) {
+        newCycleDates[i] = state.cycleDates[i] || '';
+    }
+    state.cycleDates = newCycleDates;
+
+    saveState();
+    renderSettings();
+    renderCalendar();
+    renderHeader();
+    showToast('Cycle configuration saved ✓');
+}
+
 function saveCycleDates() {
-    for (let i = 1; i <= 6; i++) {
-        state.cycleDates[i] = document.getElementById('cycle'+i+'Date').value;
+    for (let i = 1; i <= state.numberOfCycles; i++) {
+        const input = document.getElementById('cycle'+i+'Date');
+        if (input) {
+            state.cycleDates[i] = input.value;
+        }
     }
     saveState();
     renderCalendar();
@@ -1371,7 +1460,8 @@ function showMedicationModal(medId = null) {
         
         populateDaySelects();
         document.getElementById('medStartDay').value = '-1';
-        document.getElementById('medEndDay').value = '20';
+        const defaultEndDay = state.cycleLength - 2; // Last day of cycle
+        document.getElementById('medEndDay').value = defaultEndDay.toString();
     }
     
     modal.classList.add('show');
@@ -1381,7 +1471,8 @@ function populateDaySelects() {
     const startSelect = document.getElementById('medStartDay');
     const endSelect = document.getElementById('medEndDay');
     let options = '';
-    for (let d = -1; d <= 19; d++) {
+    const cycleDaysAfterChemo = state.cycleLength - 2;
+    for (let d = -1; d <= cycleDaysAfterChemo; d++) {
         const label = d <= 0 ? 'Day ' + d : 'Day +' + d;
         options += '<option value="' + d + '">' + label + '</option>';
     }
@@ -1493,10 +1584,11 @@ function generateCycleSummaryPDF() {
     const day0 = new Date(chemoDateStr);
     const cycleStart = new Date(day0);
     cycleStart.setDate(cycleStart.getDate() - 1);
+    const cycleDaysAfterChemo = state.cycleLength - 2;
     const cycleEnd = new Date(day0);
-    cycleEnd.setDate(cycleEnd.getDate() + 19);
+    cycleEnd.setDate(cycleEnd.getDate() + cycleDaysAfterChemo);
     const today = new Date();
-    
+
     const patientName = state.patientName || 'Patient';
     const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
@@ -1511,17 +1603,17 @@ function generateCycleSummaryPDF() {
     const startDateStr = cycleStart.getDate() + ' ' + months[cycleStart.getMonth()] + ' ' + cycleStart.getFullYear();
     const endDateStr = cycleEnd.getDate() + ' ' + months[cycleEnd.getMonth()] + ' ' + cycleEnd.getFullYear();
     const generatedDate = today.getDate() + ' ' + months[today.getMonth()] + ' ' + today.getFullYear();
-    
+
     // Calculate days completed
     let daysCompleted = 0;
     let currentDayInCycle = -2;
     if (today >= cycleStart) {
         const diffDays = Math.floor((today - cycleStart) / (1000*60*60*24));
-        daysCompleted = Math.min(diffDays + 1, 21);
+        daysCompleted = Math.min(diffDays + 1, state.cycleLength);
         currentDayInCycle = diffDays - 1;
     }
     if (today > cycleEnd) {
-        daysCompleted = 21;
+        daysCompleted = state.cycleLength;
     }
     
     // Collect all cycle data
@@ -1555,7 +1647,7 @@ function generateCycleSummaryPDF() {
     });
     
     // Iterate through each day
-    for (let dayNum = -1; dayNum <= 19; dayNum++) {
+    for (let dayNum = -1; dayNum <= cycleDaysAfterChemo; dayNum++) {
         const currentDate = new Date(day0);
         currentDate.setDate(currentDate.getDate() + dayNum);
         const dk = formatDate(currentDate);
@@ -2050,6 +2142,7 @@ function init() {
     document.getElementById('clearBtn').addEventListener('click', clearAllData);
     document.getElementById('savePatientBtn').addEventListener('click', savePatientDetails);
     document.getElementById('saveEmergencyBtn').addEventListener('click', saveEmergencyContacts);
+    document.getElementById('saveCycleConfigurationBtn').addEventListener('click', saveCycleConfiguration);
     document.getElementById('saveCycleDatesBtn').addEventListener('click', saveCycleDates);
     document.getElementById('sendSummaryBtn').addEventListener('click', sendDailySummary);
     document.getElementById('downloadCyclePdfBtn').addEventListener('click', generateCycleSummaryPDF);
