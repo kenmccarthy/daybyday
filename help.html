@@ -218,7 +218,7 @@
             <div class="help-subsection">
                 <h3 class="help-subsection-title">Reading the Charts</h3>
                 <ul class="help-list">
-                    <li>The horizontal axis shows cycle days from Day -1 to Day +19</li>
+                    <li>The horizontal axis shows cycle days from Day -1 through the end of your cycle (based on your configured cycle length)</li>
                     <li>The vertical axis shows symptom levels from 0 to 5</li>
                     <li>Gaps in the line indicate days where no data was recorded</li>
                     <li>Tap or hover on data points to see the exact day and level</li>
@@ -245,8 +245,18 @@
             </div>
 
             <div class="help-subsection">
+                <h3 class="help-subsection-title">Cycle Configuration</h3>
+                <p class="help-text">Customize your treatment cycle settings to match your specific protocol:</p>
+                <ul class="help-list">
+                    <li><strong>Cycle Length:</strong> Set the number of days in each cycle (default: 21 days). This can range from 1 to 60 days depending on your treatment protocol.</li>
+                    <li><strong>Number of Cycles:</strong> Set how many cycles you'll complete (default: 6 cycles). You can configure between 1 and 12 cycles.</li>
+                </ul>
+                <p class="help-text">These settings affect how the calendar displays your cycles and which days appear in your medication schedule. If you change the cycle length, you may need to adjust your medication day ranges accordingly.</p>
+            </div>
+
+            <div class="help-subsection">
                 <h3 class="help-subsection-title">Cycle Dates</h3>
-                <p class="help-text">Enter the Day 0 (chemotherapy day) for each cycle as you get scheduled. The app calculates all other days automatically. You can set up to 6 cycles.</p>
+                <p class="help-text">Enter the Day 0 (chemotherapy day) for each cycle as you get scheduled. The app calculates all other days automatically based on your configured cycle length. The number of cycle date fields matches your configured number of cycles.</p>
             </div>
 
             <div class="help-subsection">

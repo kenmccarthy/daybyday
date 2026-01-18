@@ -93,13 +93,13 @@
             <div class="cycle-progress-card" id="cycleProgressCard">
                 <div class="cycle-progress-header">
                     <span class="cycle-progress-title">Cycle Progress</span>
-                    <span class="cycle-progress-text" id="cycleProgressText">Day 0 of 23</span>
+                    <span class="cycle-progress-text" id="cycleProgressText">Day 0 of 21</span>
                 </div>
                 <div class="cycle-progress-bar"><div class="cycle-progress-fill" id="cycleProgressFill" style="width: 0%"></div></div>
                 <div class="cycle-progress-labels">
-                    <span>Day -1</span>
+                    <span id="cycleProgressStartLabel">Day -1</span>
                     <span id="cycleProgressPercent">0%</span>
-                    <span>Day +19</span>
+                    <span id="cycleProgressEndLabel">Day +19</span>
                 </div>
             </div>
             <div class="cycle-selector" id="cycleSelector"></div>
@@ -148,21 +148,29 @@
                 </div>
             </section>
             <section class="settings-section">
+                <h2 class="settings-section-title">Cycle Configuration</h2>
+                <div class="settings-card">
+                    <div class="settings-card-desc">Customize the length of your treatment cycles and how many cycles you'll complete.</div>
+                    <div class="settings-row">
+                        <div>
+                            <label class="settings-label">Cycle Length (days)</label>
+                            <input type="number" class="settings-input" id="cycleLengthInput" min="1" max="60" value="21">
+                            <small style="display: block; margin-top: 4px; color: var(--text-secondary); font-size: 13px;">Default: 21 days</small>
+                        </div>
+                        <div>
+                            <label class="settings-label">Number of Cycles</label>
+                            <input type="number" class="settings-input" id="numberOfCyclesInput" min="1" max="12" value="6">
+                            <small style="display: block; margin-top: 4px; color: var(--text-secondary); font-size: 13px;">Default: 6 cycles</small>
+                        </div>
+                    </div>
+                    <button class="settings-btn" id="saveCycleConfigurationBtn">💾 Save Cycle Configuration</button>
+                </div>
+            </section>
+            <section class="settings-section">
                 <h2 class="settings-section-title">Cycle Dates</h2>
                 <div class="settings-card">
                     <div class="settings-card-desc">Enter the Day 0 (chemo day) for each cycle. Leave blank for cycles not yet scheduled.</div>
-                    <div class="settings-row">
-                        <div><label>Cycle 1</label><input type="date" class="settings-input" id="cycle1Date" value="2025-12-22"></div>
-                        <div><label>Cycle 2</label><input type="date" class="settings-input" id="cycle2Date" value="2026-01-13"></div>
-                    </div>
-                    <div class="settings-row">
-                        <div><label>Cycle 3</label><input type="date" class="settings-input" id="cycle3Date"></div>
-                        <div><label>Cycle 4</label><input type="date" class="settings-input" id="cycle4Date"></div>
-                    </div>
-                    <div class="settings-row">
-                        <div><label>Cycle 5</label><input type="date" class="settings-input" id="cycle5Date"></div>
-                        <div><label>Cycle 6</label><input type="date" class="settings-input" id="cycle6Date"></div>
-                    </div>
+                    <div id="cycleDatesContainer"></div>
                     <button class="settings-btn" id="saveCycleDatesBtn">💾 Save Cycle Dates</button>
                 </div>
             </section>
