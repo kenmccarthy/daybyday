@@ -2,6 +2,9 @@
 
 **Cycles, made manageable**
 
+[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](CHANGELOG.md)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE.md)
+
 ## Contents
 
 - [Why This App Exists](#why-this-app-exists)
@@ -9,6 +12,7 @@
 - [Design Principles](#design-principles)
 - [How It Works](#how-it-works)
 - [Privacy & Data](#privacy--data)
+- [Versioning](#versioning)
 - [Acknowledgements](#acknowledgements)
 - [Medical Disclaimer](#medical-disclaimer)
 - [Contact](#contact)
@@ -60,6 +64,18 @@ If it takes more than a couple of seconds to log something, you'll stop doing it
 Day by Day stores data **locally** in your browser on your device. There is no backend and no account system, so nothing is uploaded by default.
 
 If you choose to email a daily summary, that email is sent using your own email app and settings. You are in control of what is shared and with whom.
+
+## Versioning
+
+Day by Day follows [Semantic Versioning](https://semver.org/) (SemVer): `MAJOR.MINOR.PATCH`
+
+- **MAJOR** version changes indicate breaking changes that may require user action
+- **MINOR** version changes introduce new features in a backwards-compatible manner
+- **PATCH** version changes include bug fixes and minor improvements
+
+**Current version:** 1.4.0
+
+For a detailed list of changes in each version, see the [CHANGELOG](CHANGELOG.md).
 
 ## Acknowledgements
 
