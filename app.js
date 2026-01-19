@@ -1134,26 +1134,30 @@ function sendDailySummary() {
 }
 
 function exportData() {
-    const data = { 
-        version: 5, 
-        exportDate: new Date().toISOString(), 
+    const data = {
+        version: 5,
+        exportDate: new Date().toISOString(),
         patientName: state.patientName,
         patientEmail: state.patientEmail,
+        patientDob: state.patientDob,
+        patientHospitalNumber: state.patientHospitalNumber,
         emergencyContacts: state.emergencyContacts,
         theme: state.theme,
         accentColour: state.accentColour,
         showDailyMessages: state.showDailyMessages,
         collapsedSections: state.collapsedSections,
+        cycleLength: state.cycleLength,
+        numberOfCycles: state.numberOfCycles,
         cycleDates: state.cycleDates,
         medications: state.medications,
         medicationsInitialised: state.medicationsInitialised,
-        takenMeds: state.takenMeds, 
-        prnTaken: state.prnTaken, 
+        takenMeds: state.takenMeds,
+        prnTaken: state.prnTaken,
         symptoms: state.symptoms,
         weights: state.weights,
         wins: state.wins,
         notes: state.notes,
-        food: state.food 
+        food: state.food
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); 
@@ -1173,52 +1177,100 @@ function exportData() {
 
 function importData(file) {
     const r = new FileReader();
-    r.onload = e => { 
-        try { 
-            const d = JSON.parse(e.target.result); 
-            if (d.takenMeds) state.takenMeds = d.takenMeds; 
-            if (d.prnTaken) state.prnTaken = d.prnTaken; 
-            if (d.symptoms) state.symptoms = d.symptoms; 
+    r.onload = e => {
+        try {
+            const d = JSON.parse(e.target.result);
+            if (d.takenMeds) state.takenMeds = d.takenMeds;
+            if (d.prnTaken) state.prnTaken = d.prnTaken;
+            if (d.symptoms) state.symptoms = d.symptoms;
             if (d.weights) state.weights = d.weights;
             if (d.wins) state.wins = d.wins;
             if (d.notes) state.notes = d.notes;
             if (d.food) state.food = d.food;
             if (d.patientName) state.patientName = d.patientName;
             if (d.patientEmail) state.patientEmail = d.patientEmail;
+            if (d.patientDob) state.patientDob = d.patientDob;
+            if (d.patientHospitalNumber) state.patientHospitalNumber = d.patientHospitalNumber;
             if (d.emergencyContacts) state.emergencyContacts = { ...state.emergencyContacts, ...d.emergencyContacts };
             if (d.accentColour) state.accentColour = d.accentColour;
             if (d.showDailyMessages !== undefined) state.showDailyMessages = d.showDailyMessages;
             if (d.collapsedSections) state.collapsedSections = d.collapsedSections;
-            if (d.medications) { 
-                state.medications = d.medications; 
-                state.medicationsInitialised = true; 
+            if (d.cycleLength) state.cycleLength = d.cycleLength;
+            if (d.numberOfCycles) state.numberOfCycles = d.numberOfCycles;
+            if (d.medications) {
+                state.medications = d.medications;
+                state.medicationsInitialised = true;
             }
             if (d.cycleDates) state.cycleDates = { ...state.cycleDates, ...d.cycleDates };
             if (d.theme) { state.theme = d.theme; applyTheme(); }
-            saveState(); 
+            saveState();
             applyCollapsedSections();
-            renderAll(); 
-            showToast('Data restored ✓'); 
-        } catch(err) { 
-            showToast('Error: Invalid file'); 
-        } 
+            renderAll();
+            showToast('Data restored ✓');
+        } catch(err) {
+            showToast('Error: Invalid file');
+        }
     };
     r.readAsText(file);
 }
 
-function clearAllData() { 
-    if (confirm('Delete all tracking data? This cannot be undone.')) { 
-        state.takenMeds = {}; 
-        state.prnTaken = {}; 
+function clearTrackingData() {
+    if (confirm('Clear all tracking data (symptoms, medications taken, weights, notes)? Your personal details and cycle configuration will be kept. This cannot be undone.')) {
+        state.takenMeds = {};
+        state.prnTaken = {};
         state.symptoms = {};
         state.weights = {};
         state.wins = {};
         state.notes = {};
-        state.food = {}; 
-        saveState(); 
-        renderAll(); 
-        showToast('All data cleared'); 
-    } 
+        state.food = {};
+        saveState();
+        renderAll();
+        showToast('Tracking data cleared');
+    }
+}
+
+function resetAllData() {
+    if (confirm('⚠️ Reset ALL data including personal details, cycle dates, and tracking? This will completely reset the app. This cannot be undone.')) {
+        if (confirm('Are you absolutely sure? This will delete EVERYTHING and cannot be recovered.')) {
+            // Reset state to defaults
+            state.takenMeds = {};
+            state.prnTaken = {};
+            state.symptoms = {};
+            state.weights = {};
+            state.wins = {};
+            state.notes = {};
+            state.food = {};
+            state.patientName = '';
+            state.patientEmail = '';
+            state.patientDob = '';
+            state.patientHospitalNumber = '';
+            state.emergencyContacts = {
+                oncologyUnit: '',
+                outOfHours: '',
+                gp: ''
+            };
+            state.cycleDates = {
+                1: '',
+                2: '',
+                3: '',
+                4: '',
+                5: '',
+                6: ''
+            };
+            state.cycleLength = 21;
+            state.numberOfCycles = 6;
+            state.medications = [];
+            state.medicationsInitialised = false;
+            state.lastBackupDate = null;
+            state.collapsedSections = {};
+            // Keep theme and accent colour as user preference
+            // Clear daily quote cache
+            localStorage.removeItem('dailyQuote');
+            saveState();
+            renderAll();
+            showToast('All data reset');
+        }
+    }
 }
 
 function savePatientDetails() {
@@ -2139,7 +2191,8 @@ function init() {
             e.target.value = ''; 
         } 
     });
-    document.getElementById('clearBtn').addEventListener('click', clearAllData);
+    document.getElementById('clearTrackingBtn').addEventListener('click', clearTrackingData);
+    document.getElementById('resetAllBtn').addEventListener('click', resetAllData);
     document.getElementById('savePatientBtn').addEventListener('click', savePatientDetails);
     document.getElementById('saveEmergencyBtn').addEventListener('click', saveEmergencyContacts);
     document.getElementById('saveCycleConfigurationBtn').addEventListener('click', saveCycleConfiguration);

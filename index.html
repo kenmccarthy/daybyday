@@ -150,7 +150,7 @@
             <section class="settings-section">
                 <h2 class="settings-section-title">Cycle Configuration</h2>
                 <div class="settings-card">
-                    <div class="settings-card-desc">Customize the length of your treatment cycles and how many cycles you'll complete.</div>
+                    <div class="settings-card-desc">Customise the length of your treatment cycles and how many cycles you'll complete.</div>
                     <div class="settings-row">
                         <div>
                             <label class="settings-label">Cycle Length (days)</label>
@@ -224,9 +224,14 @@
                     <input type="file" id="fileInput" class="file-input" accept=".json">
                 </div>
                 <div class="settings-card">
-                    <div class="settings-card-title">Clear All Data</div>
-                    <div class="settings-card-desc">Remove all tracking data. This cannot be undone.</div>
-                    <button class="settings-btn danger" id="clearBtn">🗑️ Clear All Data</button>
+                    <div class="settings-card-title">Clear Tracking Data</div>
+                    <div class="settings-card-desc">Remove all tracking data (symptoms, medications taken, weights, notes). Your personal details and cycle configuration will be kept.</div>
+                    <button class="settings-btn danger" id="clearTrackingBtn">🗑️ Clear Tracking Data</button>
+                </div>
+                <div class="settings-card">
+                    <div class="settings-card-title">Reset All Data</div>
+                    <div class="settings-card-desc">⚠️ Completely reset the app, removing ALL data including personal details, cycle dates, and tracking. This cannot be undone.</div>
+                    <button class="settings-btn danger" id="resetAllBtn">⚠️ Reset All Data</button>
                 </div>
             </section>
             <section class="settings-section">
