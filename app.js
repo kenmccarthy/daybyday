@@ -1,3 +1,6 @@
+// App version (Semantic Versioning)
+const APP_VERSION = '1.4.0';
+
 const medInfoLinks = {
     'Dexamethasone': 'https://www.drugs.com/dexamethasone.html',
     'Pantoprazole': 'https://www.drugs.com/pantoprazole.html',

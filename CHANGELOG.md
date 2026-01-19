@@ -1,0 +1,124 @@
+# Changelog
+
+All notable changes to Day by Day will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.4.0] - 2026-01-19
+
+### Added
+- Comprehensive demo backup file with 1.5 cycles of realistic sample data
+- Two separate data management options:
+  - "Clear Tracking Data" - removes only symptom/medication tracking whilst keeping configuration
+  - "Reset All Data" - complete app reset with double confirmation
+- Missing fields to backup/restore: Date of Birth, Hospital Number, Cycle Length, Number of Cycles
+
+### Changed
+- British English spelling consistency ("customize" → "customise", "recognize" → "recognise")
+- Enhanced backup file structure to include all patient configuration fields
+- Improved help documentation for data management options
+
+### Fixed
+- Backup/restore now preserves custom cycle configuration settings
+- Personal details (DOB, Hospital Number) now included in backups
+
+## [1.3.0] - 2026-01-18
+
+### Added
+- Customisable cycle length (1-60 days, default: 21 days)
+- Customisable number of cycles (1-12 cycles, default: 6 cycles)
+- Cycle Configuration section in Settings
+- Help documentation for cycle customisation
+
+### Changed
+- Calendar and medication schedules now adapt to custom cycle lengths
+- Cycle dates interface updated to support variable number of cycles
+
+## [1.2.0] - 2026-01-13
+
+### Added
+- Date of Birth field to patient details
+- Patient/Hospital Number field to patient details
+- Automatic update detection and notification system
+- Date of birth formatted display (dd mmmm yyyy)
+
+### Changed
+- Removed Day +20 from default schedule to prevent cycle overlap
+
+### Fixed
+- Android status bar colour and bottom navigation alignment
+- Bottom navigation spacing consistency across all pages
+
+## [1.1.0] - 2026-01-07
+
+### Added
+- Service worker for offline functionality (PWA support)
+- Swipe navigation between views
+- "Back to Today" floating button for quick navigation
+- Install as app capability for mobile devices
+
+### Changed
+- Improved text clarity and user interface copy
+- Enhanced navigation experience with touch gestures
+
+## [1.0.0] - 2026-01-06
+
+### Added
+- Initial release of Day by Day
+- Medication tracking with customisable schedules
+- Cycle-based calendar view (6 cycles × 21 days)
+- PRN (as-needed) medication tracking:
+  - Metoclopramide (anti-sickness)
+  - Tramadol (pain relief)
+  - Loperamide (diarrhoea)
+  - Movicol (constipation)
+- Symptom tracking with 9 metrics:
+  - Fatigue, nausea, pain, appetite, mood
+  - Mouth sores, sleep quality, bowel function, concentration
+- Symptom trend charts (Chart.js integration)
+- Weight tracking
+- Daily notes (general, food & drink)
+- "Today's Win" feature for positive moments
+- Daily summary email generation
+- Patient details management
+- Emergency contact storage
+- Dark/Light theme support
+- Accent colour customisation
+- Daily inspirational quotes (Quotable API)
+- Backup/Restore functionality (JSON export/import)
+- Responsive mobile-first design
+- Privacy-first architecture (local storage only)
+- Help documentation
+- About page with acknowledgements
+- Licence page (Apache 2.0)
+- Bottom navigation bar
+- Settings panel
+- Print-friendly cycle overview
+
+### Technical
+- Progressive Web App (PWA) support
+- Offline-first architecture
+- LocalStorage-based data persistence
+- No backend or account system
+- Service worker for caching
+- Mobile app install prompts
+- Chart.js for data visualisation
+- Google Fonts (DM Sans, Fraunces)
+- Heroicons-style navigation icons
+
+---
+
+## Version History
+
+- **1.4.0** (2026-01-19) - Enhanced backup/restore and data management
+- **1.3.0** (2026-01-18) - Customisable cycles
+- **1.2.0** (2026-01-13) - Patient details and auto-updates
+- **1.1.0** (2026-01-07) - Offline support and navigation
+- **1.0.0** (2026-01-06) - Initial release
+
+[1.4.0]: https://github.com/kenmccarthy/daybyday/compare/v1.3.0...v1.4.0
+[1.3.0]: https://github.com/kenmccarthy/daybyday/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/kenmccarthy/daybyday/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/kenmccarthy/daybyday/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/kenmccarthy/daybyday/releases/tag/v1.0.0
