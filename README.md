@@ -73,7 +73,7 @@ Day by Day follows [Semantic Versioning](https://semver.org/) (SemVer): `MAJOR.M
 - **MINOR** version changes introduce new features in a backwards-compatible manner
 - **PATCH** version changes include bug fixes and minor improvements
 
-**Current version:** 1.4.1
+**Current version:** 1.4.2
 
 For a detailed list of changes in each version, see the [CHANGELOG](CHANGELOG.md).
 
