@@ -1,5 +1,5 @@
 // App version (Semantic Versioning)
-const APP_VERSION = '1.4.0';
+const APP_VERSION = '1.4.1';
 
 const medInfoLinks = {
     'Dexamethasone': 'https://www.drugs.com/dexamethasone.html',
@@ -333,17 +333,29 @@ function getTimeOfDayGreeting() {
     return 'Good evening';
 }
 
-function getMilestoneMessage(dayNum) {
-    const messages = {
-        '-1': "Tomorrow is treatment day. You're prepared and ready.",
-        '0': "Treatment day. You're stronger than you know.",
-        '1': "You did it. The hardest day is behind you.",
-        '2': "Your body is already beginning to recover.",
-        '3': "Steroids finished. Your body will start to settle.",
-        '10': "Halfway there. You're doing brilliantly.",
-        '14': "Two weeks done. Look how far you've come.",
-        '20': "Final day of this cycle. Take a moment to recognise what you've achieved."
-    };
+function getMilestoneMessage(dayNum, cycleLength = 21) {
+    const messages = {};
+
+    // Fixed treatment-related milestones (universal for all cycle lengths)
+    messages['-1'] = "Tomorrow is treatment day. You're prepared and ready.";
+    messages['0'] = "Treatment day. You're stronger than you know.";
+    messages['1'] = "You did it. The hardest day is behind you.";
+    messages['2'] = "Your body is already beginning to recover.";
+    messages['3'] = "Steroids finished. Your body will start to settle.";
+
+    // Dynamic progress-based milestones
+    const finalDay = cycleLength - 2;
+    const halfwayDay = Math.floor(finalDay / 2);
+
+    messages[halfwayDay.toString()] = "Halfway there. You're doing brilliantly.";
+
+    // Only show "two weeks" message if cycle is long enough and it's not the final day
+    if (cycleLength >= 16 && 14 !== finalDay) {
+        messages['14'] = "Two weeks done. Look how far you've come.";
+    }
+
+    messages[finalDay.toString()] = "Final day of this cycle. Take a moment to recognise what you've achieved.";
+
     return messages[dayNum.toString()] || null;
 }
 
@@ -364,7 +376,7 @@ function renderHeader() {
         const firstName = getFirstName();
         let greetingText = '';
         if (isToday && s && state.showDailyMessages !== false) {
-            const milestone = getMilestoneMessage(s.dayNum);
+            const milestone = getMilestoneMessage(s.dayNum, state.cycleLength);
             if (milestone) {
                 greetingText = getTimeOfDayGreeting() + ', ' + firstName + '. ' + milestone;
             } else {
