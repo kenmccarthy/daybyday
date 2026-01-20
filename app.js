@@ -1,5 +1,5 @@
 // App version (Semantic Versioning)
-const APP_VERSION = '1.4.1';
+const APP_VERSION = '1.4.2';
 
 const medInfoLinks = {
     'Dexamethasone': 'https://www.drugs.com/dexamethasone.html',
@@ -61,10 +61,10 @@ for (let i = 4; i <= 12; i++) {
     };
 }
 
-// Add days 13-19 (without Loratadine)
-for (let i = 13; i <= 19; i++) {
+// Add days 13-58 (without Loratadine) - supports cycle lengths up to 60 days
+for (let i = 13; i <= 58; i++) {
     scheduleTemplate[i.toString()] = {
-        label: 'Day +' + i, note: i === 19 ? 'End of cycle' : 'Recovery',
+        label: 'Day +' + i, note: 'Recovery',
         medications: {
             morning: [{ name: 'Pantoprazole', dose: '40 mg' },{ name: 'Mycostatin', dose: '1 ml' },{ name: 'Difflam/Kin', dose: 'mouthwash' }],
             afternoon: [{ name: 'Mycostatin', dose: '1 ml' },{ name: 'Difflam/Kin', dose: 'mouthwash' }],
@@ -714,7 +714,7 @@ function renderCycleTrends() {
     container.innerHTML = html;
     
     // Create charts
-    const dayLabels = Array.from({length: 21}, (_, i) => {
+    const dayLabels = Array.from({length: cycleDaysAfterChemo + 2}, (_, i) => {
         const d = i - 1;
         return d <= 0 ? d.toString() : '+' + d;
     });
@@ -1833,7 +1833,7 @@ function generateCycleSummaryPDF() {
     html += '<div class="pdf-section">';
     html += '<div class="pdf-section-title">Overview</div>';
     html += '<div class="pdf-overview-grid">';
-    html += '<div class="pdf-stat-card"><div class="pdf-stat-value">' + daysCompleted + ' / 21</div><div class="pdf-stat-label">Days Completed</div></div>';
+    html += '<div class="pdf-stat-card"><div class="pdf-stat-value">' + daysCompleted + ' / ' + state.cycleLength + '</div><div class="pdf-stat-label">Days Completed</div></div>';
     html += '<div class="pdf-stat-card"><div class="pdf-stat-value">' + overallAdherence + '%</div><div class="pdf-stat-label">Medication Adherence</div></div>';
     
     if (weightChange) {
