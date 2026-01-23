@@ -1,5 +1,5 @@
 // App version (Semantic Versioning)
-const APP_VERSION = '1.4.4';
+const APP_VERSION = '1.5.0';
 
 const medInfoLinks = {
     'Dexamethasone': 'https://www.drugs.com/dexamethasone.html',
@@ -129,7 +129,33 @@ let state = {
         5: '',
         6: ''
     },
-    lastBackupDate: null
+    lastBackupDate: null,
+    notifications: {
+        enabled: false,
+        permission: 'default',
+        dailyCheckIn: {
+            enabled: true,
+            time: '09:00'
+        },
+        temperature: {
+            enabled: false,
+            time: '10:00'
+        },
+        weeklyBackup: {
+            enabled: true,
+            dayOfWeek: 0,  // Sunday
+            time: '20:00'
+        },
+        cycleComplete: {
+            enabled: true
+        },
+        settings: {
+            snoozeDuration: 60,  // minutes
+            quietHours: { start: '22:00', end: '07:00' },
+            vibrate: true,
+            sound: true
+        }
+    }
 };
 
 function generateDefaultMedications() {
@@ -850,6 +876,53 @@ function renderSettings() {
 
     // Render medications list
     renderMedicationsList();
+
+    // Update notifications UI
+    renderNotificationSettings();
+}
+
+function renderNotificationSettings() {
+    // Initialize notification toggles based on state
+    document.getElementById('notificationsToggle').classList.toggle('active', state.notifications.enabled);
+    document.getElementById('notificationSettings').style.display = state.notifications.enabled ? 'block' : 'none';
+
+    // Daily check-in
+    document.getElementById('dailyCheckInToggle').classList.toggle('active', state.notifications.dailyCheckIn.enabled);
+    document.getElementById('dailyCheckInTime').value = state.notifications.dailyCheckIn.time;
+
+    // Temperature
+    document.getElementById('temperatureToggle').classList.toggle('active', state.notifications.temperature.enabled);
+    document.getElementById('temperatureTime').value = state.notifications.temperature.time;
+
+    // Weekly backup
+    document.getElementById('weeklyBackupToggle').classList.toggle('active', state.notifications.weeklyBackup.enabled);
+    document.getElementById('weeklyBackupDay').value = state.notifications.weeklyBackup.dayOfWeek;
+    document.getElementById('weeklyBackupTime').value = state.notifications.weeklyBackup.time;
+
+    // Cycle complete
+    document.getElementById('cycleCompleteToggle').classList.toggle('active', state.notifications.cycleComplete.enabled);
+
+    // Advanced settings
+    document.getElementById('snoozeDuration').value = state.notifications.settings.snoozeDuration;
+    document.getElementById('quietHoursStart').value = state.notifications.settings.quietHours.start;
+    document.getElementById('quietHoursEnd').value = state.notifications.settings.quietHours.end;
+    document.getElementById('vibrateToggle').classList.toggle('active', state.notifications.settings.vibrate);
+    document.getElementById('soundToggle').classList.toggle('active', state.notifications.settings.sound);
+
+    // Set up individual toggle handlers
+    setupNotificationToggles();
+}
+
+function setupNotificationToggles() {
+    ['dailyCheckInToggle', 'temperatureToggle', 'weeklyBackupToggle', 'cycleCompleteToggle', 'vibrateToggle', 'soundToggle'].forEach(id => {
+        const element = document.getElementById(id);
+        if (element && !element.hasAttribute('data-listener-added')) {
+            element.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+            element.setAttribute('data-listener-added', 'true');
+        }
+    });
 }
 
 function updateLastBackupDisplay() {
@@ -1364,6 +1437,61 @@ function toggleShowMessages() {
     updateProgress(); // This will show/hide the quote card
     renderHeader(); // Re-render greeting
     saveState();
+}
+
+async function toggleNotifications() {
+    const toggle = document.getElementById('notificationsToggle');
+    const settingsDiv = document.getElementById('notificationSettings');
+
+    if (!state.notifications.enabled) {
+        // Trying to enable
+        const granted = await requestNotificationPermission();
+        if (granted) {
+            state.notifications.enabled = true;
+            toggle.classList.add('active');
+            settingsDiv.style.display = 'block';
+            scheduleAllNotifications();
+            saveState();
+        } else {
+            toggle.classList.remove('active');
+            alert('Notification permission is required. Please enable notifications in your browser settings.');
+        }
+    } else {
+        // Disable
+        state.notifications.enabled = false;
+        toggle.classList.remove('active');
+        settingsDiv.style.display = 'none';
+        saveState();
+    }
+}
+
+function saveNotificationSettings() {
+    // Daily check-in
+    state.notifications.dailyCheckIn.enabled = document.getElementById('dailyCheckInToggle').classList.contains('active');
+    state.notifications.dailyCheckIn.time = document.getElementById('dailyCheckInTime').value;
+
+    // Temperature
+    state.notifications.temperature.enabled = document.getElementById('temperatureToggle').classList.contains('active');
+    state.notifications.temperature.time = document.getElementById('temperatureTime').value;
+
+    // Weekly backup
+    state.notifications.weeklyBackup.enabled = document.getElementById('weeklyBackupToggle').classList.contains('active');
+    state.notifications.weeklyBackup.dayOfWeek = parseInt(document.getElementById('weeklyBackupDay').value);
+    state.notifications.weeklyBackup.time = document.getElementById('weeklyBackupTime').value;
+
+    // Cycle complete
+    state.notifications.cycleComplete.enabled = document.getElementById('cycleCompleteToggle').classList.contains('active');
+
+    // Advanced settings
+    state.notifications.settings.snoozeDuration = parseInt(document.getElementById('snoozeDuration').value);
+    state.notifications.settings.quietHours.start = document.getElementById('quietHoursStart').value;
+    state.notifications.settings.quietHours.end = document.getElementById('quietHoursEnd').value;
+    state.notifications.settings.vibrate = document.getElementById('vibrateToggle').classList.contains('active');
+    state.notifications.settings.sound = document.getElementById('soundToggle').classList.contains('active');
+
+    saveState();
+    scheduleAllNotifications();
+    alert('✓ Notification settings saved');
 }
 
 function toggleSection(sectionName) {
@@ -2146,6 +2274,267 @@ async function loadDailyQuote() {
     localStorage.setItem('dailyQuote', JSON.stringify({ date: today, quote }));
 }
 
+// ===================
+// NOTIFICATION SYSTEM
+// ===================
+
+async function requestNotificationPermission() {
+    if (!('Notification' in window)) {
+        alert('This browser does not support notifications.');
+        return false;
+    }
+
+    if (Notification.permission === 'granted') {
+        state.notifications.permission = 'granted';
+        return true;
+    }
+
+    if (Notification.permission === 'denied') {
+        state.notifications.permission = 'denied';
+        return false;
+    }
+
+    try {
+        const permission = await Notification.requestPermission();
+        state.notifications.permission = permission;
+        saveState();
+
+        if (permission === 'granted') {
+            scheduleAllNotifications();
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('Error requesting notification permission:', error);
+        return false;
+    }
+}
+
+function scheduleAllNotifications() {
+    if (!state.notifications.enabled || state.notifications.permission !== 'granted') {
+        return;
+    }
+
+    // Check if service worker is available
+    if (!('serviceWorker' in navigator)) {
+        console.warn('Service Worker not available for notifications');
+        return;
+    }
+
+    // Schedule daily check-in
+    if (state.notifications.dailyCheckIn.enabled) {
+        scheduleDailyNotification('dailyCheckIn', state.notifications.dailyCheckIn.time);
+    }
+
+    // Schedule temperature reminder
+    if (state.notifications.temperature.enabled) {
+        scheduleDailyNotification('temperature', state.notifications.temperature.time);
+    }
+
+    // Schedule weekly backup
+    if (state.notifications.weeklyBackup.enabled) {
+        scheduleWeeklyNotification();
+    }
+
+    // Check for cycle complete notification
+    if (state.notifications.cycleComplete.enabled) {
+        checkCycleCompleteNotification();
+    }
+}
+
+function scheduleDailyNotification(type, time) {
+    const [hours, minutes] = time.split(':').map(Number);
+    const now = new Date();
+    const scheduledTime = new Date();
+    scheduledTime.setHours(hours, minutes, 0, 0);
+
+    // If time has passed today, schedule for tomorrow
+    if (scheduledTime <= now) {
+        scheduledTime.setDate(scheduledTime.getDate() + 1);
+    }
+
+    // Check quiet hours
+    if (isInQuietHours(scheduledTime)) {
+        // Move to end of quiet hours
+        const quietEnd = parseQuietHours(state.notifications.settings.quietHours.end);
+        scheduledTime.setHours(quietEnd.hours, quietEnd.minutes, 0, 0);
+    }
+
+    const delay = scheduledTime.getTime() - now.getTime();
+
+    // Store the timeout ID (in a real implementation, this would use service worker)
+    setTimeout(() => {
+        showNotification(type);
+        // Reschedule for next day
+        scheduleDailyNotification(type, time);
+    }, delay);
+}
+
+function scheduleWeeklyNotification() {
+    const targetDay = state.notifications.weeklyBackup.dayOfWeek;
+    const [hours, minutes] = state.notifications.weeklyBackup.time.split(':').map(Number);
+
+    const now = new Date();
+    const scheduledTime = new Date();
+    scheduledTime.setHours(hours, minutes, 0, 0);
+
+    // Calculate days until target day
+    const currentDay = now.getDay();
+    let daysUntil = targetDay - currentDay;
+    if (daysUntil < 0 || (daysUntil === 0 && scheduledTime <= now)) {
+        daysUntil += 7;
+    }
+
+    scheduledTime.setDate(scheduledTime.getDate() + daysUntil);
+
+    if (isInQuietHours(scheduledTime)) {
+        const quietEnd = parseQuietHours(state.notifications.settings.quietHours.end);
+        scheduledTime.setHours(quietEnd.hours, quietEnd.minutes, 0, 0);
+    }
+
+    const delay = scheduledTime.getTime() - now.getTime();
+
+    setTimeout(() => {
+        showNotification('weeklyBackup');
+        scheduleWeeklyNotification();
+    }, delay);
+}
+
+function checkCycleCompleteNotification() {
+    const cycleInfo = getCurrentCycleInfo();
+    if (!cycleInfo || !cycleInfo.day0Date) return;
+
+    const cycleDaysAfterChemo = state.cycleLength - 2;
+    const lastDay = new Date(cycleInfo.day0Date);
+    lastDay.setDate(lastDay.getDate() + cycleDaysAfterChemo);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    lastDay.setHours(0, 0, 0, 0);
+
+    if (today.getTime() === lastDay.getTime()) {
+        // Schedule notification for 18:00 on cycle complete day
+        const notifTime = new Date(today);
+        notifTime.setHours(18, 0, 0, 0);
+
+        if (notifTime > new Date() && !isInQuietHours(notifTime)) {
+            const delay = notifTime.getTime() - new Date().getTime();
+            setTimeout(() => {
+                showNotification('cycleComplete');
+            }, delay);
+        }
+    }
+}
+
+async function showNotification(type) {
+    if (!state.notifications.enabled || state.notifications.permission !== 'granted') {
+        return;
+    }
+
+    const notificationData = getNotificationData(type);
+
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        try {
+            const registration = await navigator.serviceWorker.ready;
+            await registration.showNotification(notificationData.title, {
+                body: notificationData.body,
+                icon: '/icons/icon-192.png',
+                badge: '/icons/icon-192.png',
+                vibrate: state.notifications.settings.vibrate ? [200, 100, 200] : undefined,
+                tag: notificationData.tag,
+                requireInteraction: false,
+                actions: notificationData.actions,
+                data: { type: type }
+            });
+        } catch (error) {
+            console.error('Error showing notification:', error);
+        }
+    }
+}
+
+function getNotificationData(type) {
+    const notifications = {
+        dailyCheckIn: {
+            title: 'Time to log your day! ☀️',
+            body: 'Don\'t forget to track your medications and symptoms',
+            tag: 'daily-checkin',
+            actions: [
+                { action: 'open', title: 'Open App' },
+                { action: 'snooze', title: 'Snooze' }
+            ]
+        },
+        temperature: {
+            title: 'Temperature check reminder 🌡️',
+            body: 'Time to log your temperature',
+            tag: 'temperature',
+            actions: [
+                { action: 'open', title: 'Log Now' },
+                { action: 'snooze', title: 'Remind Later' }
+            ]
+        },
+        weeklyBackup: {
+            title: 'Weekly backup reminder 💾',
+            body: 'Your data is valuable - time for your weekly backup!',
+            tag: 'weekly-backup',
+            actions: [
+                { action: 'backup', title: 'Backup Now' },
+                { action: 'snooze', title: 'Remind Later' }
+            ]
+        },
+        cycleComplete: {
+            title: 'Cycle complete! 🎉',
+            body: 'Generate your PDF summary for your next appointment',
+            tag: 'cycle-complete',
+            actions: [
+                { action: 'pdf', title: 'Create PDF' },
+                { action: 'open', title: 'View Cycle' }
+            ]
+        }
+    };
+
+    return notifications[type] || notifications.dailyCheckIn;
+}
+
+function isInQuietHours(time) {
+    const hours = time.getHours();
+    const minutes = time.getMinutes();
+    const currentMinutes = hours * 60 + minutes;
+
+    const start = parseQuietHours(state.notifications.settings.quietHours.start);
+    const end = parseQuietHours(state.notifications.settings.quietHours.end);
+
+    const startMinutes = start.hours * 60 + start.minutes;
+    const endMinutes = end.hours * 60 + end.minutes;
+
+    if (startMinutes < endMinutes) {
+        return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+    } else {
+        // Quiet hours span midnight
+        return currentMinutes >= startMinutes || currentMinutes < endMinutes;
+    }
+}
+
+function parseQuietHours(timeString) {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    return { hours, minutes };
+}
+
+function snoozeNotification(type) {
+    const snoozeDuration = state.notifications.settings.snoozeDuration * 60 * 1000; // Convert to ms
+    setTimeout(() => {
+        showNotification(type);
+    }, snoozeDuration);
+}
+
+function disableAllNotifications() {
+    state.notifications.enabled = false;
+    state.notifications.dailyCheckIn.enabled = false;
+    state.notifications.temperature.enabled = false;
+    state.notifications.weeklyBackup.enabled = false;
+    state.notifications.cycleComplete.enabled = false;
+    saveState();
+}
+
 function init() {
     loadState(); 
     state.selectedDate = new Date();
@@ -2216,6 +2605,10 @@ function init() {
     document.getElementById('downloadCyclePdfBtn').addEventListener('click', generateCycleSummaryPDF);
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
     document.getElementById('showMessagesToggle').addEventListener('click', toggleShowMessages);
+
+    // Notifications
+    document.getElementById('notificationsToggle').addEventListener('click', toggleNotifications);
+    document.getElementById('saveNotificationsBtn').addEventListener('click', saveNotificationSettings);
     
     // Collapsible sections
     document.querySelectorAll('.section-header-collapsible').forEach(header => {
