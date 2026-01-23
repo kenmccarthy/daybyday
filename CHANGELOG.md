@@ -5,6 +5,29 @@ All notable changes to Day by Day will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-01-23
+
+### Added
+- Push notification system for engagement and habit reminders:
+  - Daily check-in reminder to log medications and symptoms (configurable time, default 9am)
+  - Temperature tracking reminder (optional, configurable time, default 10am)
+  - Weekly backup reminder (configurable day/time, default Sunday 8pm)
+  - End of cycle PDF summary reminder (fires on last day of cycle)
+  - Fully customisable notification schedule and preferences
+  - Snooze functionality with configurable duration
+  - Quiet hours support to prevent nighttime disturbances
+  - Notification action buttons for quick responses
+  - iOS limitation warnings and guidance
+- Notifications section in Settings with granular controls
+- Comprehensive notification documentation in help.html
+
+### Technical
+- Service worker notification scheduling and handling
+- Notification permission management
+- Local notification state persistence
+- Notification click handlers with app navigation
+- Background notification support (browser-dependent)
+
 ## [1.4.4] - 2026-01-23
 
 ### Changed
@@ -158,6 +181,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.5.0** (2026-01-23) - Push notification system
 - **1.4.4** (2026-01-23) - Documentation improvements (about.html and help.html)
 - **1.4.3** (2026-01-23) - Service worker cache version fix
 - **1.4.2** (2026-01-20) - Additional cycle length adaptation bug fixes
@@ -168,6 +192,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **1.1.0** (2026-01-07) - Offline support and navigation
 - **1.0.0** (2026-01-06) - Initial release
 
+[1.5.0]: https://github.com/kenmccarthy/daybyday/compare/v1.4.4...v1.5.0
 [1.4.4]: https://github.com/kenmccarthy/daybyday/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/kenmccarthy/daybyday/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/kenmccarthy/daybyday/compare/v1.4.1...v1.4.2

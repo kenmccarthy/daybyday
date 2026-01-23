@@ -1,7 +1,7 @@
 {
   "name": "Day by Day",
   "short_name": "Day by Day",
-  "version": "1.4.4",
+  "version": "1.5.0",
   "description": "Cycles, made manageable.",
   "start_url": "/",
   "display": "standalone",

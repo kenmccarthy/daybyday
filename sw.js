@@ -1,7 +1,7 @@
 // Day by Day - Service Worker
 // Enables offline functionality and faster loading
 
-const CACHE_VERSION = 'v1.4.4';
+const CACHE_VERSION = 'v1.5.0';
 const CACHE_NAME = `daybyday-${CACHE_VERSION}`;
 
 // Files to cache for offline use
@@ -140,4 +140,44 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+});
+
+// Handle notification clicks
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  const action = event.action;
+  const type = event.notification.data?.type;
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      // Check if app is already open
+      for (const client of clientList) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          return client.focus().then(() => {
+            // Send message to app to handle the action
+            client.postMessage({
+              type: 'NOTIFICATION_ACTION',
+              action: action,
+              notificationType: type
+            });
+          });
+        }
+      }
+
+      // App not open, open it
+      if (clients.openWindow) {
+        let url = '/';
+
+        // Navigate to relevant section based on notification type
+        if (type === 'weeklyBackup' && action === 'backup') {
+          url = '/#settings';
+        } else if (type === 'cycleComplete' && action === 'pdf') {
+          url = '/#calendar';
+        }
+
+        return clients.openWindow(url);
+      }
+    })
+  );
 });

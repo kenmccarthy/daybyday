@@ -175,6 +175,86 @@
                 </div>
             </section>
             <section class="settings-section">
+                <h2 class="settings-section-title">Notifications</h2>
+                <div class="settings-card">
+                    <div class="settings-card-desc">
+                        <p style="margin: 0 0 8px 0;">Get helpful reminders to log your medications, track symptoms, and backup your data.</p>
+                        <p style="margin: 0; padding: 12px; background: var(--bg-secondary); border-left: 3px solid var(--accent-colour); border-radius: 4px; font-size: 14px;">
+                            ⚠️ <strong>iOS Notification Limitations:</strong> Notifications work reliably on Android and desktop browsers. On iPhone/iPad, notifications may not appear if you haven't opened the app in several days or if Safari is not running. For best results on iOS, open the app daily or use it as a home screen app.
+                        </p>
+                    </div>
+                    <div class="toggle-row" style="margin-top: 16px;">
+                        <span class="toggle-label">Enable Notifications</span>
+                        <div class="toggle-switch" id="notificationsToggle"></div>
+                    </div>
+                    <div id="notificationSettings" style="display: none; margin-top: 16px;">
+                        <div class="settings-card-title" style="margin-bottom: 12px;">Daily Reminders</div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">Daily check-in reminder</span>
+                            <div class="toggle-switch active" id="dailyCheckInToggle"></div>
+                        </div>
+                        <div style="margin-left: 16px; margin-top: 8px;">
+                            <label class="settings-label" style="font-size: 13px;">Time:</label>
+                            <input type="time" class="settings-input" id="dailyCheckInTime" value="09:00" style="max-width: 150px;">
+                        </div>
+                        <div class="toggle-row" style="margin-top: 12px;">
+                            <span class="toggle-label">Temperature reminder</span>
+                            <div class="toggle-switch" id="temperatureToggle"></div>
+                        </div>
+                        <div style="margin-left: 16px; margin-top: 8px;">
+                            <label class="settings-label" style="font-size: 13px;">Time:</label>
+                            <input type="time" class="settings-input" id="temperatureTime" value="10:00" style="max-width: 150px;">
+                        </div>
+                        <div class="settings-card-title" style="margin: 20px 0 12px 0;">Weekly Reminders</div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">Weekly backup reminder</span>
+                            <div class="toggle-switch active" id="weeklyBackupToggle"></div>
+                        </div>
+                        <div style="margin-left: 16px; margin-top: 8px;">
+                            <label class="settings-label" style="font-size: 13px;">Day:</label>
+                            <select class="settings-input" id="weeklyBackupDay" style="max-width: 150px;">
+                                <option value="0" selected>Sunday</option>
+                                <option value="1">Monday</option>
+                                <option value="2">Tuesday</option>
+                                <option value="3">Wednesday</option>
+                                <option value="4">Thursday</option>
+                                <option value="5">Friday</option>
+                                <option value="6">Saturday</option>
+                            </select>
+                            <label class="settings-label" style="font-size: 13px; margin-top: 8px;">Time:</label>
+                            <input type="time" class="settings-input" id="weeklyBackupTime" value="20:00" style="max-width: 150px;">
+                        </div>
+                        <div class="settings-card-title" style="margin: 20px 0 12px 0;">Cycle Reminders</div>
+                        <div class="toggle-row">
+                            <span class="toggle-label">End of cycle PDF reminder</span>
+                            <div class="toggle-switch active" id="cycleCompleteToggle"></div>
+                        </div>
+                        <div class="settings-card-title" style="margin: 20px 0 12px 0;">Advanced Settings</div>
+                        <div>
+                            <label class="settings-label">Snooze duration (minutes):</label>
+                            <input type="number" class="settings-input" id="snoozeDuration" min="5" max="120" value="60" style="max-width: 150px;">
+                        </div>
+                        <div style="margin-top: 12px;">
+                            <label class="settings-label">Quiet hours:</label>
+                            <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+                                <input type="time" class="settings-input" id="quietHoursStart" value="22:00" style="max-width: 120px;">
+                                <span style="color: var(--text-secondary);">to</span>
+                                <input type="time" class="settings-input" id="quietHoursEnd" value="07:00" style="max-width: 120px;">
+                            </div>
+                        </div>
+                        <div class="toggle-row" style="margin-top: 12px;">
+                            <span class="toggle-label">Vibrate</span>
+                            <div class="toggle-switch active" id="vibrateToggle"></div>
+                        </div>
+                        <div class="toggle-row" style="margin-top: 12px;">
+                            <span class="toggle-label">Play sound</span>
+                            <div class="toggle-switch active" id="soundToggle"></div>
+                        </div>
+                    </div>
+                    <button class="settings-btn" id="saveNotificationsBtn" style="margin-top: 16px;">💾 Save Notification Settings</button>
+                </div>
+            </section>
+            <section class="settings-section">
                 <h2 class="settings-section-title">Appearance</h2>
                 <div class="settings-card">
                     <div class="toggle-row">
