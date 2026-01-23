@@ -5,6 +5,15 @@ All notable changes to Day by Day will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.3] - 2026-01-23
+
+### Fixed
+- Service worker cache version now syncs with app version:
+  - Cache version updated from generic "v2" to "v1.4.3" matching app version
+  - Ensures users receive latest file updates (including help.html fixes)
+  - Old caches are properly invalidated and removed
+  - Resolves issue where users were not receiving updated files due to stale cache
+
 ## [1.4.2] - 2026-01-20
 
 ### Fixed
@@ -134,6 +143,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.4.3** (2026-01-23) - Service worker cache version fix
 - **1.4.2** (2026-01-20) - Additional cycle length adaptation bug fixes
 - **1.4.1** (2026-01-20) - Milestone message cycle length bug fixes
 - **1.4.0** (2026-01-19) - Enhanced backup/restore and data management
@@ -142,6 +152,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **1.1.0** (2026-01-07) - Offline support and navigation
 - **1.0.0** (2026-01-06) - Initial release
 
+[1.4.3]: https://github.com/kenmccarthy/daybyday/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/kenmccarthy/daybyday/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/kenmccarthy/daybyday/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/kenmccarthy/daybyday/compare/v1.3.0...v1.4.0
