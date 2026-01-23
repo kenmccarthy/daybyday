@@ -5,6 +5,21 @@ All notable changes to Day by Day will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.4] - 2026-01-23
+
+### Changed
+- Enhanced about.html documentation:
+  - Updated Contact section with clearer support expectations and limitations
+  - Added new "Data Storage & Risks" section explaining local storage implications
+  - Added PDF export feature to "How It Works" section
+- Comprehensive help.html improvements:
+  - Added complete "Cycle Summary PDF" section with usage guidance
+  - Added "Offline Use" subsection explaining offline functionality
+  - Added "Swipe Navigation" subsection for touch gesture navigation
+  - Added "Milestone Messages" to Today View features
+  - Added "Quick Navigation" subsection explaining "Back to Today" button
+  - Improved overall documentation coverage of existing features
+
 ## [1.4.3] - 2026-01-23
 
 ### Fixed
@@ -143,6 +158,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.4.4** (2026-01-23) - Documentation improvements (about.html and help.html)
 - **1.4.3** (2026-01-23) - Service worker cache version fix
 - **1.4.2** (2026-01-20) - Additional cycle length adaptation bug fixes
 - **1.4.1** (2026-01-20) - Milestone message cycle length bug fixes
@@ -152,6 +168,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **1.1.0** (2026-01-07) - Offline support and navigation
 - **1.0.0** (2026-01-06) - Initial release
 
+[1.4.4]: https://github.com/kenmccarthy/daybyday/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/kenmccarthy/daybyday/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/kenmccarthy/daybyday/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/kenmccarthy/daybyday/compare/v1.4.0...v1.4.1
