@@ -8,15 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.5.1] - 2026-01-24
 
 ### Fixed
-- Notification system reliability on mobile devices (Android and iOS):
-  - Added persistent storage of scheduled notification times to state
-  - Implemented missed notification detection on app launch
-  - Notifications now reschedule automatically when app reopens
-  - Improved reliability when browser/tab is closed or device sleeps
-- Notification time settings now auto-save when changed:
-  - Time inputs automatically trigger save after changes
-  - Confirmation message changed from alert to toast: "Notification settings saved"
-  - Eliminates confusion about whether changes were saved
 - "Back to Today" button now appears correctly when viewing past or future days:
   - Fixed logic flaw that prevented button from showing in most cases
   - Button now shows whenever viewing any day other than today
@@ -30,15 +21,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prevents accidental future data entry that could cause confusion
 
 ### Changed
+- Notification system documentation updated to accurately reflect limitations:
+  - **IMPORTANT:** Notifications only work while the app is open or running in the background (browser tab open but minimised)
+  - Notifications will NOT appear if the browser or app is completely closed
+  - This is a technical limitation of web apps without a server backend
+  - Notifications are positioned as "gentle reminders whilst using the app" rather than background alarms
+  - Added missed notification detection - shows gentle reminder toast when reopening app after missing a scheduled notification
+  - Updated help.html, index.html warning messages to be clear about when notifications work
+  - Notification time settings now auto-save when changed with toast confirmation
 - Help documentation updated:
   - Added cycle length and number of cycles to Initial Setup instructions
   - Users now guided to configure these critical settings during setup
 - Service worker cache version updated to v1.5.1
 
 ### Technical
-- Added `nextScheduled` tracking to daily and weekly notification states
+- Added `nextScheduled` tracking to daily and weekly notification states for persistence
 - Added `lastCheck` timestamp to notification state for missed notification detection
-- Implemented `checkMissedNotifications()` function called on app init
+- Implemented `checkMissedNotifications()` function that shows user feedback when notifications were missed
 - Added auto-save event listeners to all notification time input fields
 - Enhanced future day detection across all render functions (renderMedications, renderPRN, renderSymptoms, renderNotes, renderFood, renderWin)
 - Textarea fields now properly disabled with cleared placeholders for future days
@@ -46,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.5.0] - 2026-01-23
 
 ### Added
-- Push notification system for engagement and habit reminders:
+- In-app notification system for gentle reminders whilst using the app:
   - Daily check-in reminder to log medications and symptoms (configurable time, default 9am)
   - Temperature tracking reminder (optional, configurable time, default 10am)
   - Weekly backup reminder (configurable day/time, default Sunday 8pm)
@@ -55,16 +54,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Snooze functionality with configurable duration
   - Quiet hours support to prevent nighttime disturbances
   - Notification action buttons for quick responses
-  - iOS limitation warnings and guidance
+  - **Note:** Notifications only work while the app is open or running in background (see v1.5.1 for clarification)
 - Notifications section in Settings with granular controls
 - Comprehensive notification documentation in help.html
 
 ### Technical
-- Service worker notification scheduling and handling
+- Service worker notification display and click handling
 - Notification permission management
 - Local notification state persistence
 - Notification click handlers with app navigation
-- Background notification support (browser-dependent)
+- setTimeout-based scheduling for notifications while app is active
 
 ## [1.4.4] - 2026-01-23
 
