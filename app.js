@@ -135,16 +135,19 @@ let state = {
         permission: 'default',
         dailyCheckIn: {
             enabled: true,
-            time: '09:00'
+            time: '09:00',
+            nextScheduled: null
         },
         temperature: {
             enabled: false,
-            time: '10:00'
+            time: '10:00',
+            nextScheduled: null
         },
         weeklyBackup: {
             enabled: true,
             dayOfWeek: 0,  // Sunday
-            time: '20:00'
+            time: '20:00',
+            nextScheduled: null
         },
         cycleComplete: {
             enabled: true
@@ -154,7 +157,8 @@ let state = {
             quietHours: { start: '22:00', end: '07:00' },
             vibrate: true,
             sound: true
-        }
+        },
+        lastCheck: null  // Track last time we checked for notifications
     }
 };
 
@@ -428,7 +432,7 @@ function renderHeader() {
 
     // Show/hide "Back to Today" button
     const backToTodayBtn = document.getElementById('backToTodayBtn');
-    if (state.currentView === 'today' && !isToday) {
+    if (!isToday) {
         backToTodayBtn.style.display = 'flex';
     } else {
         backToTodayBtn.style.display = 'none';
@@ -472,14 +476,16 @@ function renderMedications() {
     const c = document.getElementById('medicationsContainer'), dk = formatDate(state.selectedDate), s = getDaySchedule(state.selectedDate);
     const isToday = dk === formatDate(new Date());
     const isFuture = state.selectedDate > new Date();
-    
-    if (!s) { 
-        if (isFuture) {
-            c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🌱</div><p>This day is ahead of you.</p><p class="empty-state-sub">Focus on today – you\'ll get here when you\'re ready.</p></div>'; 
-        } else {
-            c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📅</div><p>No medications scheduled</p></div>'; 
-        }
-        return; 
+
+    // Show future day message for any future day
+    if (isFuture) {
+        c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🌱</div><p>This day is ahead of you.</p><p class="empty-state-sub">Focus on today – you\'ll get here when you\'re ready.</p></div>';
+        return;
+    }
+
+    if (!s) {
+        c.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📅</div><p>No medications scheduled</p></div>';
+        return;
     }
     const tt = state.takenMeds[dk] || {};
     const periods = [{key:'morning',label:'Morning',time:'06:00–12:00'},{key:'afternoon',label:'Afternoon',time:'12:00–18:00'},{key:'evening',label:'Evening',time:'18:00–22:00'},{key:'bedtime',label:'Bedtime',time:'22:00–00:00'}];
@@ -505,6 +511,14 @@ function renderMedications() {
 
 function renderPRN() {
     const c = document.getElementById('prnContainer'), dk = formatDate(state.selectedDate), pt = state.prnTaken[dk] || {};
+    const isFuture = state.selectedDate > new Date();
+
+    // Don't allow PRN logging for future days
+    if (isFuture) {
+        c.innerHTML = '';
+        return;
+    }
+
     let html = '';
     prnMedications.forEach(m => {
         const cnt = pt[m.id] || 0, link = getMedInfoLink(m.name);
@@ -521,10 +535,18 @@ function renderPRN() {
 
 function renderSymptoms() {
     const c = document.getElementById('symptomsContainer'), dk = formatDate(state.selectedDate), st = state.symptoms[dk] || {};
+    const isFuture = state.selectedDate > new Date();
+
+    // Don't allow symptom logging for future days
+    if (isFuture) {
+        c.innerHTML = '';
+        return;
+    }
+
     const temp = st.temperature || '', tempWarn = temp && parseFloat(temp) >= 38;
     const weight = state.weights[dk] || '';
     const baseline = getBaselineWeight();
-    
+
     let html = '<div class="vitals-row">';
     // Temperature
     html += '<div class="symptom-card"><div class="symptom-label"><span class="icon">🌡️</span>Temp</div>';
@@ -817,18 +839,29 @@ function renderCycleTrends() {
     });
 }
 
-function renderNotes() { 
-    document.getElementById('notesTextarea').value = state.notes[formatDate(state.selectedDate)] || ''; 
+function renderNotes() {
+    const isFuture = state.selectedDate > new Date();
+    const notesTextarea = document.getElementById('notesTextarea');
+    notesTextarea.value = state.notes[formatDate(state.selectedDate)] || '';
+    notesTextarea.disabled = isFuture;
+    notesTextarea.placeholder = isFuture ? '' : 'Any other observations or things to mention at your next appointment...';
 }
 
 
 function renderFood() {
-    document.getElementById('foodTextarea').value =
-        state.food[formatDate(state.selectedDate)] || '';
+    const isFuture = state.selectedDate > new Date();
+    const foodTextarea = document.getElementById('foodTextarea');
+    foodTextarea.value = state.food[formatDate(state.selectedDate)] || '';
+    foodTextarea.disabled = isFuture;
+    foodTextarea.placeholder = isFuture ? '' : 'What did you eat and drink today?';
 }
 
 function renderWin() {
-    document.getElementById('winTextarea').value = state.wins[formatDate(state.selectedDate)] || '';
+    const isFuture = state.selectedDate > new Date();
+    const winTextarea = document.getElementById('winTextarea');
+    winTextarea.value = state.wins[formatDate(state.selectedDate)] || '';
+    winTextarea.disabled = isFuture;
+    winTextarea.placeholder = isFuture ? '' : 'What went well today? Even small wins count...';
 }
 
 function renderCycleDatesInputs() {
@@ -1491,7 +1524,7 @@ function saveNotificationSettings() {
 
     saveState();
     scheduleAllNotifications();
-    alert('✓ Notification settings saved');
+    showToast('Notification settings saved');
 }
 
 function toggleSection(sectionName) {
@@ -2362,6 +2395,10 @@ function scheduleDailyNotification(type, time) {
 
     const delay = scheduledTime.getTime() - now.getTime();
 
+    // Store next scheduled time for persistence
+    state.notifications[type].nextScheduled = scheduledTime.toISOString();
+    saveState();
+
     // Store the timeout ID (in a real implementation, this would use service worker)
     setTimeout(() => {
         showNotification(type);
@@ -2393,6 +2430,10 @@ function scheduleWeeklyNotification() {
     }
 
     const delay = scheduledTime.getTime() - now.getTime();
+
+    // Store next scheduled time for persistence
+    state.notifications.weeklyBackup.nextScheduled = scheduledTime.toISOString();
+    saveState();
 
     setTimeout(() => {
         showNotification('weeklyBackup');
@@ -2526,6 +2567,41 @@ function snoozeNotification(type) {
     }, snoozeDuration);
 }
 
+function checkMissedNotifications() {
+    if (!state.notifications.enabled || state.notifications.permission !== 'granted') {
+        return;
+    }
+
+    const now = new Date();
+    const lastCheck = state.notifications.lastCheck ? new Date(state.notifications.lastCheck) : null;
+
+    // Update last check time
+    state.notifications.lastCheck = now.toISOString();
+    saveState();
+
+    // If no last check, this is first time - just reschedule
+    if (!lastCheck) {
+        scheduleAllNotifications();
+        return;
+    }
+
+    // Check if any scheduled notifications were missed
+    ['dailyCheckIn', 'temperature', 'weeklyBackup'].forEach(type => {
+        const notif = state.notifications[type];
+        if (notif && notif.enabled && notif.nextScheduled) {
+            const scheduledTime = new Date(notif.nextScheduled);
+            // If scheduled time is in the past and after last check, it was missed
+            if (scheduledTime < now && scheduledTime > lastCheck) {
+                console.log('Missed notification:', type, 'scheduled for', scheduledTime);
+                // Could optionally show it now, but for now just reschedule
+            }
+        }
+    });
+
+    // Reschedule all notifications
+    scheduleAllNotifications();
+}
+
 function disableAllNotifications() {
     state.notifications.enabled = false;
     state.notifications.dailyCheckIn.enabled = false;
@@ -2609,7 +2685,23 @@ function init() {
     // Notifications
     document.getElementById('notificationsToggle').addEventListener('click', toggleNotifications);
     document.getElementById('saveNotificationsBtn').addEventListener('click', saveNotificationSettings);
-    
+
+    // Auto-save notification time changes
+    let notifTimeoutId;
+    const notifTimeInputs = ['dailyCheckInTime', 'temperatureTime', 'weeklyBackupTime', 'weeklyBackupDay',
+                              'quietHoursStart', 'quietHoursEnd', 'snoozeDuration'];
+    notifTimeInputs.forEach(inputId => {
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.addEventListener('change', () => {
+                clearTimeout(notifTimeoutId);
+                notifTimeoutId = setTimeout(() => {
+                    saveNotificationSettings();
+                }, 300);
+            });
+        }
+    });
+
     // Collapsible sections
     document.querySelectorAll('.section-header-collapsible').forEach(header => {
         header.addEventListener('click', () => toggleSection(header.dataset.section));
@@ -2716,6 +2808,9 @@ function init() {
         updateProgress();
         showToast('Back to today');
     });
+
+    // Check for missed notifications and reschedule
+    checkMissedNotifications();
 }
 
 document.addEventListener('DOMContentLoaded', init);
