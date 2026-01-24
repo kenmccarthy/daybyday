@@ -2585,18 +2585,41 @@ function checkMissedNotifications() {
         return;
     }
 
-    // Check if any scheduled notifications were missed
+    // Check if any scheduled notifications were missed today
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+
+    const missedNotifications = [];
+
     ['dailyCheckIn', 'temperature', 'weeklyBackup'].forEach(type => {
         const notif = state.notifications[type];
         if (notif && notif.enabled && notif.nextScheduled) {
             const scheduledTime = new Date(notif.nextScheduled);
-            // If scheduled time is in the past and after last check, it was missed
-            if (scheduledTime < now && scheduledTime > lastCheck) {
-                console.log('Missed notification:', type, 'scheduled for', scheduledTime);
-                // Could optionally show it now, but for now just reschedule
+            // If scheduled time was today, is in the past, and after last check, it was missed
+            if (scheduledTime >= todayStart && scheduledTime < now && scheduledTime > lastCheck) {
+                missedNotifications.push({
+                    type: type,
+                    time: scheduledTime.toLocaleTimeString('en-IE', { hour: '2-digit', minute: '2-digit' })
+                });
             }
         }
     });
+
+    // Show gentle reminder if notifications were missed
+    if (missedNotifications.length > 0) {
+        const messages = {
+            dailyCheckIn: 'daily check-in',
+            temperature: 'temperature reminder',
+            weeklyBackup: 'weekly backup'
+        };
+
+        const missedList = missedNotifications.map(m => `${messages[m.type]} (${m.time})`).join(', ');
+
+        // Show toast after a short delay so it appears after the app loads
+        setTimeout(() => {
+            showToast(`💙 Gentle reminder: You missed ${missedNotifications.length === 1 ? 'a' : 'some'} notification${missedNotifications.length > 1 ? 's' : ''} today`);
+        }, 1500);
+    }
 
     // Reschedule all notifications
     scheduleAllNotifications();
