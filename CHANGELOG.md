@@ -5,6 +5,44 @@ All notable changes to Day by Day will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-01-24
+
+### Fixed
+- Notification system reliability on mobile devices (Android and iOS):
+  - Added persistent storage of scheduled notification times to state
+  - Implemented missed notification detection on app launch
+  - Notifications now reschedule automatically when app reopens
+  - Improved reliability when browser/tab is closed or device sleeps
+- Notification time settings now auto-save when changed:
+  - Time inputs automatically trigger save after changes
+  - Confirmation message changed from alert to toast: "Notification settings saved"
+  - Eliminates confusion about whether changes were saved
+- "Back to Today" button now appears correctly when viewing past or future days:
+  - Fixed logic flaw that prevented button from showing in most cases
+  - Button now shows whenever viewing any day other than today
+  - Works correctly from both calendar view and when navigating days
+- Future day data entry protection implemented across all sections:
+  - Users can no longer log medications for days that haven't occurred yet
+  - Symptoms, temperature, weight cannot be entered for future days
+  - PRN medications hidden for future days
+  - Notes, food & drink, and wins fields disabled for future days
+  - Shows motivational message: "This day is ahead of you. Focus on today – you'll get here when you're ready."
+  - Prevents accidental future data entry that could cause confusion
+
+### Changed
+- Help documentation updated:
+  - Added cycle length and number of cycles to Initial Setup instructions
+  - Users now guided to configure these critical settings during setup
+- Service worker cache version updated to v1.5.1
+
+### Technical
+- Added `nextScheduled` tracking to daily and weekly notification states
+- Added `lastCheck` timestamp to notification state for missed notification detection
+- Implemented `checkMissedNotifications()` function called on app init
+- Added auto-save event listeners to all notification time input fields
+- Enhanced future day detection across all render functions (renderMedications, renderPRN, renderSymptoms, renderNotes, renderFood, renderWin)
+- Textarea fields now properly disabled with cleared placeholders for future days
+
 ## [1.5.0] - 2026-01-23
 
 ### Added
