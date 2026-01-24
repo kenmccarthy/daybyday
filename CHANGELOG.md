@@ -219,6 +219,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.5.1** (2026-01-24) - Notification reliability and UI logic fixes
 - **1.5.0** (2026-01-23) - Push notification system
 - **1.4.4** (2026-01-23) - Documentation improvements (about.html and help.html)
 - **1.4.3** (2026-01-23) - Service worker cache version fix
@@ -230,6 +231,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **1.1.0** (2026-01-07) - Offline support and navigation
 - **1.0.0** (2026-01-06) - Initial release
 
+[1.5.1]: https://github.com/kenmccarthy/daybyday/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/kenmccarthy/daybyday/compare/v1.4.4...v1.5.0
 [1.4.4]: https://github.com/kenmccarthy/daybyday/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/kenmccarthy/daybyday/compare/v1.4.2...v1.4.3
