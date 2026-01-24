@@ -2,7 +2,7 @@
 
 **Cycles, made manageable**
 
-[![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.5.1-blue.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE.md)
 
 ## Contents
@@ -73,7 +73,7 @@ Day by Day follows [Semantic Versioning](https://semver.org/) (SemVer): `MAJOR.M
 - **MINOR** version changes introduce new features in a backwards-compatible manner
 - **PATCH** version changes include bug fixes and minor improvements
 
-**Current version:** 1.5.0
+**Current version:** 1.5.1
 
 For a detailed list of changes in each version, see the [CHANGELOG](CHANGELOG.md).
 
