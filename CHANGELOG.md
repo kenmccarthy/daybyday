@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.5.0] - 2026-01-23
 
 ### Added
-- Push notification system for engagement and habit reminders:
+- In-app notification system for gentle reminders whilst using the app:
   - Daily check-in reminder to log medications and symptoms (configurable time, default 9am)
   - Temperature tracking reminder (optional, configurable time, default 10am)
   - Weekly backup reminder (configurable day/time, default Sunday 8pm)
@@ -42,16 +42,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Snooze functionality with configurable duration
   - Quiet hours support to prevent nighttime disturbances
   - Notification action buttons for quick responses
-  - iOS limitation warnings and guidance
+  - **Note:** Notifications only work while the app is open or running in background (see v1.5.1 for clarification)
 - Notifications section in Settings with granular controls
 - Comprehensive notification documentation in help.html
 
 ### Technical
-- Service worker notification scheduling and handling
+- Service worker notification display and click handling
 - Notification permission management
 - Local notification state persistence
 - Notification click handlers with app navigation
-- Background notification support (browser-dependent)
+- setTimeout-based scheduling for notifications while app is active
 
 ## [1.4.4] - 2026-01-23
 
