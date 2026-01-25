@@ -5,42 +5,30 @@ All notable changes to Day by Day will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.1] - 2026-01-24
+## [1.6.0] - 2026-01-25
 
-### Fixed
-- "Back to Today" button now appears correctly when viewing past or future days:
-  - Fixed logic flaw that prevented button from showing in most cases
-  - Button now shows whenever viewing any day other than today
-  - Works correctly from both calendar view and when navigating days
-- Future day data entry protection implemented across all sections:
-  - Users can no longer log medications for days that haven't occurred yet
-  - Symptoms, temperature, weight cannot be entered for future days
-  - PRN medications hidden for future days
-  - Notes, food & drink, and wins fields disabled for future days
-  - Shows motivational message: "This day is ahead of you. Focus on today – you'll get here when you're ready."
-  - Prevents accidental future data entry that could cause confusion
+### Added
+- Milestone celebration system for recognising important moments:
+  - Cycle completion celebrations with dynamic messages that adapt to total cycle count
+  - Treatment anniversary markers (7, 30, 60, 90, 180, and 365 days since first treatment)
+  - Public holiday greetings (Christmas, New Year, Valentine's Day, St. Patrick's Day, Halloween)
+  - Birthday greetings for users with date of birth configured
+- Celebration card UI component with gradient styling
+- Comprehensive milestone documentation in help.html
 
 ### Changed
-- Notification system documentation updated to accurately reflect limitations:
-  - **IMPORTANT:** Notifications only work while the app is open or running in the background (browser tab open but minimised)
-  - Notifications will NOT appear if the browser or app is completely closed
-  - This is a technical limitation of web apps without a server backend
-  - Notifications are positioned as "gentle reminders whilst using the app" rather than background alarms
-  - Added missed notification detection - shows gentle reminder toast when reopening app after missing a scheduled notification
-  - Updated help.html, index.html warning messages to be clear about when notifications work
-  - Notification time settings now auto-save when changed with toast confirmation
-- Help documentation updated:
-  - Added cycle length and number of cycles to Initial Setup instructions
-  - Users now guided to configure these critical settings during setup
-- Service worker cache version updated to v1.5.1
+- Enhanced README.md documentation:
+  - Added PDF export and notifications to "How It Works" section
+  - Added "Data Storage & Risks" subsection explaining local storage implications
+  - Updated Contact section with clear support expectations and limitations
+  - Added subtle mention of milestone messages
+- Birthday greetings integrated into daily greeting system (surprise feature)
 
 ### Technical
-- Added `nextScheduled` tracking to daily and weekly notification states for persistence
-- Added `lastCheck` timestamp to notification state for missed notification detection
-- Implemented `checkMissedNotifications()` function that shows user feedback when notifications were missed
-- Added auto-save event listeners to all notification time input fields
-- Enhanced future day detection across all render functions (renderMedications, renderPRN, renderSymptoms, renderNotes, renderFood, renderWin)
-- Textarea fields now properly disabled with cleared placeholders for future days
+- Celebration detection functions: `isBirthdayToday()`, `getCurrentCycleCompletion()`, `getTreatmentAnniversary()`, `getPublicHoliday()`
+- Dynamic message generation: `getBirthdayGreeting()`, `getCycleCompletionMessage()`, `getTodaysCelebration()`
+- Celebration priority system: Birthday > Cycle Completion > Treatment Anniversary > Public Holiday
+- Celebration card rendering with conditional display based on `showDailyMessages` setting
 
 ## [1.5.0] - 2026-01-23
 
@@ -218,7 +206,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
-- **1.5.1** (2026-01-24) - Notification reliability and UI logic fixes
+- **1.6.0** (2026-01-25) - Milestone celebration system
 - **1.5.0** (2026-01-23) - Push notification system
 - **1.4.4** (2026-01-23) - Documentation improvements (about.html and help.html)
 - **1.4.3** (2026-01-23) - Service worker cache version fix
@@ -230,7 +218,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **1.1.0** (2026-01-07) - Offline support and navigation
 - **1.0.0** (2026-01-06) - Initial release
 
-[1.5.1]: https://github.com/kenmccarthy/daybyday/compare/v1.5.0...v1.5.1
+[1.6.0]: https://github.com/kenmccarthy/daybyday/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/kenmccarthy/daybyday/compare/v1.4.4...v1.5.0
 [1.4.4]: https://github.com/kenmccarthy/daybyday/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/kenmccarthy/daybyday/compare/v1.4.2...v1.4.3

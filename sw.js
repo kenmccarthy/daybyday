@@ -1,7 +1,7 @@
 // Day by Day - Service Worker
 // Enables offline functionality and faster loading
 
-const CACHE_VERSION = 'v1.5.1';
+const CACHE_VERSION = 'v1.6.0';
 const CACHE_NAME = `daybyday-${CACHE_VERSION}`;
 
 // Files to cache for offline use

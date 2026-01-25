@@ -1,5 +1,5 @@
 // App version (Semantic Versioning)
-const APP_VERSION = '1.5.1';
+const APP_VERSION = '1.6.0';
 
 const medInfoLinks = {
     'Dexamethasone': 'https://www.drugs.com/dexamethasone.html',
@@ -389,6 +389,247 @@ function getMilestoneMessage(dayNum, cycleLength = 21) {
     return messages[dayNum.toString()] || null;
 }
 
+// ====================================
+// CELEBRATION & MILESTONE FUNCTIONS
+// ====================================
+
+/**
+ * Check if today is the user's birthday
+ */
+function isBirthdayToday() {
+    if (!state.patientDob) return false;
+
+    const dob = new Date(state.patientDob);
+    const today = new Date();
+
+    return dob.getMonth() === today.getMonth() &&
+           dob.getDate() === today.getDate();
+}
+
+/**
+ * Generate birthday greeting (doesn't show age)
+ */
+function getBirthdayGreeting() {
+    const firstName = getFirstName() || 'friend';
+    const greetings = [
+        `Happy birthday, ${firstName}! Wishing you gentle moments and bright spots today. 🎂`,
+        `It's your birthday, ${firstName}! May today bring you comfort and joy. 🎉`,
+        `Happy birthday! Here's to you, ${firstName}, and brighter days ahead. 🎈`
+    ];
+
+    // Use day of year to pick consistent greeting for today
+    const today = new Date();
+    const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000*60*60*24));
+    return greetings[dayOfYear % greetings.length];
+}
+
+/**
+ * Check if a cycle was completed yesterday
+ * Returns {cycleNumber, totalCycles} or null
+ */
+function getCurrentCycleCompletion() {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayKey = formatDate(yesterday);
+
+    // Check all cycles to see if yesterday was the last day
+    for (let cycleNum = 1; cycleNum <= state.numberOfCycles; cycleNum++) {
+        const cycleStartDate = state.cycleDates[cycleNum];
+        if (!cycleStartDate) continue;
+
+        const startDate = new Date(cycleStartDate);
+        const finalDay = state.cycleLength - 2; // Last day is cycleLength - 2
+        const lastDayDate = new Date(startDate);
+        lastDayDate.setDate(lastDayDate.getDate() + finalDay);
+
+        if (formatDate(lastDayDate) === yesterdayKey) {
+            return { cycleNumber: cycleNum, totalCycles: state.numberOfCycles };
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Generate cycle completion celebration message
+ */
+function getCycleCompletionMessage(cycleNumber, totalCycles) {
+    const firstName = getFirstName() || 'there';
+    const remaining = totalCycles - cycleNumber;
+    const isHalfway = (cycleNumber === Math.ceil(totalCycles / 2));
+    const isSecondToLast = (cycleNumber === totalCycles - 1);
+    const isFinal = (cycleNumber === totalCycles);
+
+    if (isFinal) {
+        return `🎉 ${firstName}, you completed your final cycle! Treatment is complete. What an incredible achievement.`;
+    }
+
+    if (isSecondToLast) {
+        return `✨ Cycle ${cycleNumber} complete, ${firstName}! Just one more to go. You're almost there.`;
+    }
+
+    if (isHalfway && totalCycles > 1) {
+        return `🌟 Cycle ${cycleNumber} complete, ${firstName}! You're halfway through treatment. Look how far you've come.`;
+    }
+
+    if (remaining === 1) {
+        return `💪 Cycle ${cycleNumber} complete, ${firstName}! One more cycle to go. You've got this.`;
+    }
+
+    if (remaining > 1) {
+        return `✅ Cycle ${cycleNumber} complete, ${firstName}! ${remaining} more to go. Well done.`;
+    }
+
+    return `✅ Cycle ${cycleNumber} complete, ${firstName}! Well done.`;
+}
+
+/**
+ * Check for treatment anniversaries
+ * Returns {days, message} or null
+ */
+function getTreatmentAnniversary() {
+    // Find the very first cycle start date
+    let firstCycleDate = null;
+    for (let i = 1; i <= state.numberOfCycles; i++) {
+        if (state.cycleDates[i]) {
+            firstCycleDate = new Date(state.cycleDates[i]);
+            break;
+        }
+    }
+
+    if (!firstCycleDate) return null;
+
+    const today = new Date();
+    const daysSinceStart = Math.floor((today - firstCycleDate) / (1000*60*60*24));
+
+    const firstName = getFirstName() || 'there';
+
+    const milestones = [
+        { days: 7, message: `🌱 One week since treatment started, ${firstName}. You're already stronger than you think.` },
+        { days: 30, message: `📅 One month since treatment started, ${firstName}. Look at everything you've accomplished.` },
+        { days: 60, message: `🗓️ Two months since treatment started, ${firstName}. You're making real progress.` },
+        { days: 90, message: `⭐ Three months since treatment started, ${firstName}. That's a significant milestone.` },
+        { days: 180, message: `🎯 Six months since treatment started, ${firstName}. What a journey you're on.` },
+        { days: 365, message: `🎊 One year since treatment started, ${firstName}. What an incredible year of courage.` }
+    ];
+
+    const match = milestones.find(m => m.days === daysSinceStart);
+    return match || null;
+}
+
+/**
+ * Check for public holidays
+ * Returns holiday message or null
+ */
+function getPublicHoliday() {
+    const today = new Date();
+    const month = today.getMonth() + 1; // 1-12
+    const day = today.getDate();
+    const firstName = getFirstName() || 'there';
+
+    // Christmas Day
+    if (month === 12 && day === 25) {
+        return `🎄 Merry Christmas, ${firstName}! Wishing you comfort and peace today.`;
+    }
+
+    // Christmas Eve
+    if (month === 12 && day === 24) {
+        return `🎄 Happy Christmas Eve, ${firstName}! Hope you can find some moments of joy today.`;
+    }
+
+    // New Year's Day
+    if (month === 1 && day === 1) {
+        return `🎊 Happy New Year, ${firstName}! Here's to new beginnings.`;
+    }
+
+    // New Year's Eve
+    if (month === 12 && day === 31) {
+        return `🥂 Happy New Year's Eve, ${firstName}! Reflecting on how far you've come.`;
+    }
+
+    // Valentine's Day
+    if (month === 2 && day === 14) {
+        return `💝 Happy Valentine's Day, ${firstName}! Sending care and warmth your way.`;
+    }
+
+    // St. Patrick's Day
+    if (month === 3 && day === 17) {
+        return `☘️ Happy St. Patrick's Day, ${firstName}! May the luck be with you today.`;
+    }
+
+    // Halloween
+    if (month === 10 && day === 31) {
+        return `🎃 Happy Halloween, ${firstName}! Hope you find some treats today.`;
+    }
+
+    return null;
+}
+
+/**
+ * Master function to check for today's celebration
+ * Priority: Birthday > Cycle Completion > Treatment Anniversary > Public Holiday
+ * Returns celebration message or null
+ */
+function getTodaysCelebration() {
+    // Priority 1: Birthday (surprise feature, not documented)
+    if (isBirthdayToday()) {
+        return {
+            type: 'birthday',
+            message: getBirthdayGreeting()
+        };
+    }
+
+    // Priority 2: Cycle completion (from yesterday)
+    const cycleCompletion = getCurrentCycleCompletion();
+    if (cycleCompletion) {
+        return {
+            type: 'cycleComplete',
+            message: getCycleCompletionMessage(cycleCompletion.cycleNumber, cycleCompletion.totalCycles)
+        };
+    }
+
+    // Priority 3: Treatment anniversary
+    const anniversary = getTreatmentAnniversary();
+    if (anniversary) {
+        return {
+            type: 'anniversary',
+            message: anniversary.message
+        };
+    }
+
+    // Priority 4: Public holiday
+    const holiday = getPublicHoliday();
+    if (holiday) {
+        return {
+            type: 'holiday',
+            message: holiday
+        };
+    }
+
+    return null;
+}
+
+/**
+ * Render celebration card in the UI
+ */
+function renderCelebrationCard() {
+    const container = document.getElementById('celebrationCard');
+    if (!container) return;
+
+    const celebration = getTodaysCelebration();
+
+    if (celebration && state.showDailyMessages !== false) {
+        container.innerHTML = `
+            <div class="celebration-message">
+                ${celebration.message}
+            </div>
+        `;
+        container.style.display = 'block';
+    } else {
+        container.style.display = 'none';
+    }
+}
+
 function renderHeader() {
     const d = state.selectedDate, s = getDaySchedule(d);
     const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -405,19 +646,30 @@ function renderHeader() {
     if (state.patientName) {
         const firstName = getFirstName();
         let greetingText = '';
-        if (isToday && s && state.showDailyMessages !== false) {
-            const milestone = getMilestoneMessage(s.dayNum, state.cycleLength);
-            if (milestone) {
-                greetingText = getTimeOfDayGreeting() + ', ' + firstName + '. ' + milestone;
-            } else {
-                const encouragements = [
-                    "You've got this.",
-                    "One step at a time.",
-                    "One day at a time.",
-                    "You're doing great."
-                ];
-                const dayIndex = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / (1000*60*60*24));
-                greetingText = getTimeOfDayGreeting() + ', ' + firstName + '. ' + encouragements[dayIndex % encouragements.length];
+        if (isToday && state.showDailyMessages !== false) {
+            // Priority 1: Birthday greeting (surprise feature)
+            if (isBirthdayToday()) {
+                greetingText = getBirthdayGreeting();
+            }
+            // Priority 2: Milestone message (if in a cycle)
+            else if (s) {
+                const milestone = getMilestoneMessage(s.dayNum, state.cycleLength);
+                if (milestone) {
+                    greetingText = getTimeOfDayGreeting() + ', ' + firstName + '. ' + milestone;
+                } else {
+                    const encouragements = [
+                        "You've got this.",
+                        "One step at a time.",
+                        "One day at a time.",
+                        "You're doing great."
+                    ];
+                    const dayIndex = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / (1000*60*60*24));
+                    greetingText = getTimeOfDayGreeting() + ', ' + firstName + '. ' + encouragements[dayIndex % encouragements.length];
+                }
+            }
+            // Priority 3: Standard greeting if not in a cycle
+            else {
+                greetingText = getTimeOfDayGreeting() + ', ' + firstName + '.';
             }
         } else if (isToday) {
             greetingText = getTimeOfDayGreeting() + ', ' + firstName + '.';
@@ -446,10 +698,15 @@ function updateProgress() {
     const allDoneCard = document.getElementById('allDoneCard');
     const quoteCard = document.getElementById('quoteCard');
     const isToday = dk === formatDate(new Date());
-    
+
     // Handle quote card visibility based on showDailyMessages setting
     if (quoteCard) {
         quoteCard.style.display = (state.showDailyMessages !== false && isToday) ? 'block' : 'none';
+    }
+
+    // Render celebration card if it's today
+    if (isToday) {
+        renderCelebrationCard();
     }
     
     if (!s) { 

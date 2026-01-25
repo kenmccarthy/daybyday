@@ -2,7 +2,7 @@
 
 **Cycles, made manageable**
 
-[![Version](https://img.shields.io/badge/version-1.5.1-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE.md)
 
 ## Contents
@@ -54,6 +54,9 @@ Day by Day is a self-contained web app designed for a phone screen first. You ca
 - Write quick notes about symptoms, mood, sleep, or anything else that matters
 - View symptom trends across each cycle to spot patterns
 - Generate a daily summary email as a record for yourself or your care team
+- Export a cycle summary PDF with charts, trends, and notes for medical appointments
+- Receive optional reminders to log medications, track symptoms, and backup data
+- Receive encouraging milestone messages celebrating your progress
 
 ### The "two-second" test
 
@@ -65,6 +68,14 @@ Day by Day stores data **locally** in your browser on your device. There is no b
 
 If you choose to email a daily summary, that email is sent using your own email app and settings. You are in control of what is shared and with whom.
 
+### Data Storage & Risks
+
+- Your data lives ONLY on this device in this browser
+- Clearing browser data = losing everything
+- Uninstalling the app = losing everything
+- Factory reset = losing everything
+- Regular backups (via Settings) are strongly recommended
+
 ## Versioning
 
 Day by Day follows [Semantic Versioning](https://semver.org/) (SemVer): `MAJOR.MINOR.PATCH`
@@ -73,7 +84,7 @@ Day by Day follows [Semantic Versioning](https://semver.org/) (SemVer): `MAJOR.M
 - **MINOR** version changes introduce new features in a backwards-compatible manner
 - **PATCH** version changes include bug fixes and minor improvements
 
-**Current version:** 1.5.1
+**Current version:** 1.6.0
 
 For a detailed list of changes in each version, see the [CHANGELOG](CHANGELOG.md).
 
@@ -99,7 +110,17 @@ Always follow the guidance of your medical team. If you are worried about sympto
 
 ## Contact
 
-Feedback and ideas are welcome – especially if they keep the app simple and genuinely useful.
+Day by Day is a personal project shared freely.
+
+I welcome feedback and bug reports, but please understand:
+
+- I cannot provide medical advice
+- I cannot guarantee response times
+- I cannot recover lost data
+- I cannot customise the app for individual protocols
+- Support is provided on a best-effort basis only
+
+For medical questions, contact your care team. For technical emergencies, ensure you have recent backups.
 
 - **Developer:** Ken McCarthy
 - **Email:** [kenmccarthy@gmail.com](mailto:kenmccarthy@gmail.com)
