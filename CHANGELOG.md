@@ -5,6 +5,31 @@ All notable changes to Day by Day will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-01-25
+
+### Added
+- Milestone celebration system for recognising important moments:
+  - Cycle completion celebrations with dynamic messages that adapt to total cycle count
+  - Treatment anniversary markers (7, 30, 60, 90, 180, and 365 days since first treatment)
+  - Public holiday greetings (Christmas, New Year, Valentine's Day, St. Patrick's Day, Halloween)
+  - Birthday greetings for users with date of birth configured
+- Celebration card UI component with gradient styling
+- Comprehensive milestone documentation in help.html
+
+### Changed
+- Enhanced README.md documentation:
+  - Added PDF export and notifications to "How It Works" section
+  - Added "Data Storage & Risks" subsection explaining local storage implications
+  - Updated Contact section with clear support expectations and limitations
+  - Added subtle mention of milestone messages
+- Birthday greetings integrated into daily greeting system (surprise feature)
+
+### Technical
+- Celebration detection functions: `isBirthdayToday()`, `getCurrentCycleCompletion()`, `getTreatmentAnniversary()`, `getPublicHoliday()`
+- Dynamic message generation: `getBirthdayGreeting()`, `getCycleCompletionMessage()`, `getTodaysCelebration()`
+- Celebration priority system: Birthday > Cycle Completion > Treatment Anniversary > Public Holiday
+- Celebration card rendering with conditional display based on `showDailyMessages` setting
+
 ## [1.5.0] - 2026-01-23
 
 ### Added
@@ -181,6 +206,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
+- **1.6.0** (2026-01-25) - Milestone celebration system
 - **1.5.0** (2026-01-23) - Push notification system
 - **1.4.4** (2026-01-23) - Documentation improvements (about.html and help.html)
 - **1.4.3** (2026-01-23) - Service worker cache version fix
@@ -192,6 +218,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **1.1.0** (2026-01-07) - Offline support and navigation
 - **1.0.0** (2026-01-06) - Initial release
 
+[1.6.0]: https://github.com/kenmccarthy/daybyday/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/kenmccarthy/daybyday/compare/v1.4.4...v1.5.0
 [1.4.4]: https://github.com/kenmccarthy/daybyday/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/kenmccarthy/daybyday/compare/v1.4.2...v1.4.3

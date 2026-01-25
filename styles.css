@@ -319,6 +319,10 @@ body { padding-bottom: 100px; }
 .all-done-icon { width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 24px; color: white; }
 .all-done-text { font-family: 'Fraunces', serif; font-size: 16px; color: white; font-weight: 500; }
 
+/* Celebration card */
+.celebration-card { background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 16px; padding: 24px; margin-bottom: 24px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.celebration-message { font-family: 'Fraunces', serif; font-size: 17px; color: white; font-weight: 500; line-height: 1.5; }
+
 /* Collapsible sections */
 .collapsible-section { }
 .section-header-collapsible { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 4px 0; margin-bottom: 8px; }
